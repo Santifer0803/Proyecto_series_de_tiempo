@@ -16,7 +16,7 @@ pacman::p_load(ggplot2,
 
 Posteriormente, se cargan los datos requeridos.
 
-```{r descarga_datos}
+```{r descarga_datos, message = FALSE}
 imae <- read_excel("data/imae.xlsx")
 ```
 
