@@ -11,12 +11,12 @@ Inicialmente, descargamos las librarías requeridas.
 
 ```{r librarias}
 pacman::p_load(ggplot2,
-               readxl)
+               readr)
 ```
 
 Posteriormente, se cargan los datos requeridos.
 
 ```{r descarga_datos, message = FALSE}
-imae <- read_excel("data/imae.xlsx")
+bicicletas <- read_csv("data/bicicletas.csv")
 ```
 
