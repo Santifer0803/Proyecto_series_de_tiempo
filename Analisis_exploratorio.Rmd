@@ -20,3 +20,36 @@ Posteriormente, se cargan los datos requeridos.
 bicicletas <- read_csv("data/bicicletas.csv")
 ```
 
+# Análisis exploratorio de datos
+
+## Boxplots
+
+A
+
+## Series de tiempo
+
+A
+
+## ACF
+
+A
+
+## CCF
+
+A
+
+## Coherencia
+
+A
+
+## Sobredispersión
+
+A
+
+## Periodogramas
+
+A
+
+## Monthplot
+
+A
