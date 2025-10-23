@@ -10,7 +10,9 @@ output: html_document
 Inicialmente, descargamos las librarías requeridas.
 
 ```{r librarias}
-pacman::p_load(ggplot2,
+pacman::p_load(dplyr,
+               ggplot2,
+               lubridate,
                readr)
 ```
 
@@ -50,6 +52,3 @@ A
 
 A
 
-## Monthplot
-
-A
