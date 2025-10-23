@@ -24,9 +24,16 @@ bicicletas <- read_csv("data/bicicletas.csv")
 
 # Análisis exploratorio de datos
 
+A través de diversas herramientas, se busca entender el contenido de los datos. Con esto, se pueden evidenciar variables relevantes e interacciones entre los diversos factores de la información disponible.
+
 ## Boxplots
 
-A
+En este caso, se analiza el comportamiento de algunas variables a través de boxplots, con la intención de detectar patrones relevantes en las variables de forma individual y al interactuar con otras variables.
+
+```{r boxplots}
+
+```
+
 
 ## Series de tiempo
 
