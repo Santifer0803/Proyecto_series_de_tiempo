@@ -10,7 +10,8 @@ output: html_document
 Inicialmente, descargamos las librarías requeridas.
 
 ```{r librarias}
-pacman::p_load(dplyr,
+pacman::p_load(astsa,
+               dplyr,
                ggplot2,
                lubridate,
                paletteer,
@@ -142,5 +143,21 @@ A
 
 ## Periodogramas
 
-A
+Para hacer un análisis de las frecuencias que pueden existir en las diversas variables, se procede con algunos periodogramas.
+
+```{r periodogramas}
+# Se grafica el periodograma del conteo de bicicletas
+conteo_bicis <- mvspec(
+  ts(
+    bicicletas$cnt,
+    start = c(2011, 1, 1),
+    frequency = 365
+  ),
+  kernel = kernel("modified.daniell", c(3, 3)),
+  taper = .1,
+  log = "yes",
+  main = ""
+)
+```
+
 
