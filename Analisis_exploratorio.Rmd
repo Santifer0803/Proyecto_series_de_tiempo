@@ -13,6 +13,7 @@ Inicialmente, descargamos las librarías requeridas.
 pacman::p_load(dplyr,
                ggplot2,
                lubridate,
+               paletteer,
                readr)
 ```
 
@@ -21,6 +22,38 @@ Posteriormente, se cargan los datos requeridos.
 ```{r descarga_datos, message = FALSE}
 bicicletas <- read_csv("data/bicicletas.csv")
 ```
+
+Se guarda la paleta de colores utilizada para el desarrollo del proyecto.
+
+```{r paleta_colores}
+paleta_colores <- c(
+  "#4B1D91",
+  "#641896",
+  "#84109B",
+  "#9B109C",
+  "#B0179C",
+  "#CB2B97",
+  "#E2438A",
+  "#EF6276",
+  "#F28265",
+  "#F2A85F",
+  "#EDC375",
+  "#E7D39A"
+)
+```
+
+Algunas correcciones de formato.
+
+```{r formato}
+# Se discretiza la variable de días de la semana
+bicicletas$weekday <- as.factor(bicicletas$weekday)
+levels(bicicletas$weekday) <- c("Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb")
+
+# Se discretiza la variable del clima
+bicicletas$weathersit <- as.factor(bicicletas$weathersit)
+levels(bicicletas$weathersit) <- c("Despejado", "Nublado", "Lluvioso/Nevado")
+```
+
 
 # Análisis exploratorio de datos
 
@@ -31,7 +64,59 @@ A través de diversas herramientas, se busca entender el contenido de los datos.
 En este caso, se analiza el comportamiento de algunas variables a través de boxplots, con la intención de detectar patrones relevantes en las variables de forma individual y al interactuar con otras variables.
 
 ```{r boxplots}
+# Conteo de bicicletas según día de la semana
+ggplot(bicicletas,
+       aes(x = weekday, y = cnt, fill = weekday)) +
+  geom_boxplot() +
+  labs(x = "Día de la semana", y = "Cantidad de bibicletas") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_manual(values = paleta_colores)
 
+# Conteo de bicicletas casuales según día de la semana
+ggplot(bicicletas,
+       aes(x = weekday, y = casual, fill = weekday)) +
+  geom_boxplot() +
+  labs(x = "Día de la semana", y = "Cantidad de bibicletas") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_manual(values = paleta_colores)
+
+# Conteo de bicicletas registradas según día de la semana
+ggplot(bicicletas,
+       aes(x = weekday, y = registered, fill = weekday)) +
+  geom_boxplot() +
+  labs(x = "Día de la semana", y = "Cantidad de bibicletas") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_manual(values = paleta_colores)
+
+# Conteo de bicicletas según día de la semana
+ggplot(bicicletas,
+       aes(x = weathersit, y = cnt, fill = weathersit)) +
+  geom_boxplot() +
+  labs(x = "Clima", y = "Cantidad de bibicletas") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_manual(values = paleta_colores)
+
+# Conteo de bicicletas casuales según día de la semana
+ggplot(bicicletas,
+       aes(x = weathersit, y = casual, fill = weathersit)) +
+  geom_boxplot() +
+  labs(x = "Clima", y = "Cantidad de bibicletas") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_manual(values = paleta_colores)
+
+# Conteo de bicicletas registradas según día de la semana
+ggplot(bicicletas,
+       aes(x = weathersit, y = registered, fill = weathersit)) +
+  geom_boxplot() +
+  labs(x = "Clima", y = "Cantidad de bibicletas") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_manual(values = paleta_colores)
 ```
 
 
