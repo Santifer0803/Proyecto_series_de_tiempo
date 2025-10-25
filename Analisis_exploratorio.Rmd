@@ -146,6 +146,98 @@ A
 Para hacer un análisis de las frecuencias que pueden existir en las diversas variables, se procede con algunos periodogramas.
 
 ```{r periodogramas}
+# Se grafica el periodograma del conteo de la temperatura
+temp_bicis <- mvspec(
+  ts(
+    bicicletas$temp,
+    start = c(2011, 1, 1),
+    frequency = 365
+  ),
+  kernel = kernel("modified.daniell", c(3, 3)),
+  taper = .1,
+  log = "yes",
+  main = "",
+  plot = FALSE
+)
+
+# Se pasa el espectro a ggplot
+data.frame(freq = temp_bicis$freq,
+           spec = temp_bicis$spec) %>%
+  ggplot(aes(x = freq, y = spec)) +
+  geom_line(color = paleta_colores[6], linewidth = 1) +
+  labs(x = "Frecuencia (diaria)",
+       y = "Espectro (escala logarítmica)") +
+  theme_minimal(base_size = 14)
+
+# Se grafica el periodograma del conteo de la sensación térmica
+atemp_bicis <- mvspec(
+  ts(
+    bicicletas$atemp,
+    start = c(2011, 1, 1),
+    frequency = 365
+  ),
+  kernel = kernel("modified.daniell", c(3, 3)),
+  taper = .1,
+  log = "yes",
+  main = "",
+  plot = FALSE
+)
+
+# Se pasa el espectro a ggplot
+data.frame(freq = atemp_bicis$freq,
+           spec = atemp_bicis$spec) %>%
+  ggplot(aes(x = freq, y = spec)) +
+  geom_line(color = paleta_colores[6], linewidth = 1) +
+  labs(x = "Frecuencia (diaria)",
+       y = "Espectro (escala logarítmica)") +
+  theme_minimal(base_size = 14)
+
+# Se grafica el periodograma del conteo de la humedad
+hum_bicis <- mvspec(
+  ts(
+    bicicletas$hum,
+    start = c(2011, 1, 1),
+    frequency = 365
+  ),
+  kernel = kernel("modified.daniell", c(3, 3)),
+  taper = .1,
+  log = "yes",
+  main = "",
+  plot = FALSE
+)
+
+# Se pasa el espectro a ggplot
+data.frame(freq = hum_bicis$freq,
+           spec = hum_bicis$spec) %>%
+  ggplot(aes(x = freq, y = spec)) +
+  geom_line(color = paleta_colores[6], linewidth = 1) +
+  labs(x = "Frecuencia (diaria)",
+       y = "Espectro (escala logarítmica)") +
+  theme_minimal(base_size = 14)
+
+# Se grafica el periodograma del conteo de la velocidad del viento
+viento_bicis <- mvspec(
+  ts(
+    bicicletas$windspeed,
+    start = c(2011, 1, 1),
+    frequency = 365
+  ),
+  kernel = kernel("modified.daniell", c(3, 3)),
+  taper = .1,
+  log = "yes",
+  main = "",
+  plot = FALSE
+)
+
+# Se pasa el espectro a ggplot
+data.frame(freq = viento_bicis$freq,
+           spec = viento_bicis$spec) %>%
+  ggplot(aes(x = freq, y = spec)) +
+  geom_line(color = paleta_colores[6], linewidth = 1) +
+  labs(x = "Frecuencia (diaria)",
+       y = "Espectro (escala logarítmica)") +
+  theme_minimal(base_size = 14)
+
 # Se grafica el periodograma del conteo de bicicletas
 conteo_bicis <- mvspec(
   ts(
@@ -156,8 +248,122 @@ conteo_bicis <- mvspec(
   kernel = kernel("modified.daniell", c(3, 3)),
   taper = .1,
   log = "yes",
-  main = ""
+  main = "",
+  plot = FALSE
 )
+
+# Se pasa el espectro a ggplot
+data.frame(freq = conteo_bicis$freq,
+           spec = conteo_bicis$spec) %>%
+  ggplot(aes(x = freq, y = spec)) +
+  geom_line(color = paleta_colores[6], linewidth = 1) +
+  labs(x = "Frecuencia (diaria)",
+       y = "Espectro (escala logarítmica)") +
+  theme_minimal(base_size = 14)
+
+# Se grafica el periodograma del conteo de bicicletas casuales
+casual_bicis <- mvspec(
+  ts(
+    bicicletas$casual,
+    start = c(2011, 1, 1),
+    frequency = 365
+  ),
+  kernel = kernel("modified.daniell", c(3, 3)),
+  taper = .1,
+  log = "yes",
+  main = "",
+  plot = FALSE
+)
+
+# Se pasa el espectro a ggplot
+data.frame(freq = casual_bicis$freq,
+           spec = casual_bicis$spec) %>%
+  ggplot(aes(x = freq, y = spec)) +
+  geom_line(color = paleta_colores[6], linewidth = 1) +
+  geom_vline(
+    xintercept = 52,
+    color = paleta_colores[3],
+    linetype = "dashed",
+    linewidth = 1
+  ) +
+  geom_vline(
+    xintercept = 104,
+    color = paleta_colores[3],
+    linetype = "dashed",
+    linewidth = 1
+  ) +
+  annotate(
+    "text",
+    x = 52,
+    y = 22500,
+    label = "Frecuencia = 52",
+    color = paleta_colores[3],
+    hjust = -0.1,
+    size = 4
+  ) +
+  annotate(
+    "text",
+    x = 104,
+    y = 6000,
+    label = "Frecuencia = 104",
+    color = paleta_colores[3],
+    hjust = -0.1,
+    size = 4
+  ) +
+  labs(x = "Frecuencia (diaria)",
+       y = "Espectro (escala logarítmica)") +
+  theme_minimal(base_size = 14)
+
+# Se grafica el periodograma del conteo de bicicletas registradas
+registro_bicis <- mvspec(
+  ts(
+    bicicletas$registered,
+    start = c(2011, 1, 1),
+    frequency = 365
+  ),
+  kernel = kernel("modified.daniell", c(3, 3)),
+  taper = .1,
+  log = "yes",
+  main = "",
+  plot = FALSE
+)
+
+# Se pasa el espectro a ggplot
+data.frame(freq = registro_bicis$freq,
+           spec = registro_bicis$spec) %>%
+  ggplot(aes(x = freq, y = spec)) +
+  geom_line(color = paleta_colores[6], linewidth = 1) +
+  geom_vline(
+    xintercept = 52,
+    color = paleta_colores[3],
+    linetype = "dashed",
+    linewidth = 1
+  ) +
+  geom_vline(
+    xintercept = 104,
+    color = paleta_colores[3],
+    linetype = "dashed",
+    linewidth = 1
+  ) +
+  annotate(
+    "text",
+    x = 52,
+    y = 30000,
+    label = "Frecuencia = 52",
+    color = paleta_colores[3],
+    hjust = -0.1,
+    size = 4
+  ) +
+  annotate(
+    "text",
+    x = 104,
+    y = 6000,
+    label = "Frecuencia = 104",
+    color = paleta_colores[3],
+    hjust = -0.1,
+    size = 4
+  ) +
+  labs(x = "Frecuencia (diaria)",
+       y = "Espectro (escala logarítmica)") +
+  theme_minimal(base_size = 14)
 ```
-
-
