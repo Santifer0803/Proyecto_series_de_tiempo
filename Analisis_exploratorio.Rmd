@@ -120,6 +120,81 @@ ggplot(bicicletas,
   scale_fill_manual(values = paleta_colores)
 ```
 
+## Boxplot por día festivo:
+
+(Agregar INFO)
+
+```{r}
+# Factor para día festivo (0/1 -> No festivo / Festivo)
+bicicletas$holiday <- as.factor(bicicletas$holiday)
+levels(bicicletas$holiday) <- c("No festivo", "Festivo")
+
+# Boxplot: Alquileres totales por día festivo
+ggplot(bicicletas,
+       aes(x = holiday, y = cnt, fill = holiday)) +
+  geom_boxplot() +
+  labs(x = "Día festivo", y = "Alquileres totales") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_manual(values = paleta_colores)
+
+# Boxplot: Alquileres casuales por día festivo
+ggplot(bicicletas,
+       aes(x = holiday, y = casual, fill = holiday)) +
+  geom_boxplot() +
+  labs(x = "Día festivo", y = "Alquileres casuales") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_manual(values = paleta_colores)
+
+# Boxplot: Alquileres registrados por día festivo
+ggplot(bicicletas,
+       aes(x = holiday, y = registered, fill = holiday)) +
+  geom_boxplot() +
+  labs(x = "Día festivo", y = "Alquileres registrados") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_manual(values = paleta_colores)
+
+```
+##Boxplot por día trabajado
+
+(Agregar info)
+
+```{r}
+# Factor para día laboral (0/1 -> No laboral / Laboral)
+bicicletas$workingday <- as.factor(bicicletas$workingday)
+levels(bicicletas$workingday) <- c("No laboral", "Laboral")
+
+# Boxplot: Alquileres totales por día laboral
+ggplot(bicicletas,
+       aes(x = workingday, y = cnt, fill = workingday)) +
+  geom_boxplot() +
+  labs(x = "Día laboral", y = "Alquileres totales") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_manual(values = paleta_colores)
+
+# Boxplot: Alquileres casuales por día laboral
+ggplot(bicicletas,
+       aes(x = workingday, y = casual, fill = workingday)) +
+  geom_boxplot() +
+  labs(x = "Día laboral", y = "Alquileres casuales") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_manual(values = paleta_colores)
+
+# Boxplot: Alquileres registrados por día laboral
+ggplot(bicicletas,
+       aes(x = workingday, y = registered, fill = workingday)) +
+  geom_boxplot() +
+  labs(x = "Día laboral", y = "Alquileres registrados") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_manual(values = paleta_colores)
+
+```
+
 
 ## Series de tiempo
 
