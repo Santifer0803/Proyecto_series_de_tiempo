@@ -153,14 +153,16 @@ ggplot(bicicletas,
 
 ## Boxplot por día festivo:
 
-(Agregar info)
+Para esta sección se agregan boxplots de las variables contra los días festivos, con el fin de observar la distribución de los alquileres en estas fechas.
 
-```{r}
+```{r, indicadora dia festivo}
 # Factor para día festivo (0/1 -> No festivo / Festivo)
 bicicletas$holiday <- as.factor(bicicletas$holiday)
 levels(bicicletas$holiday) <- c("No festivo", "Festivo")
+```
 
-# Boxplot: Alquileres totales por día festivo
+
+```{r, alquileres totales por días festivos}
 ggplot(bicicletas,
        aes(x = holiday, y = cnt, fill = holiday)) +
   geom_boxplot() +
@@ -168,8 +170,10 @@ ggplot(bicicletas,
   theme_minimal() +
   theme(legend.position = "none") +
   scale_fill_manual(values = paleta_colores)
+```
+En el gráfico anterior se puede observar una mayor dispersión de los días festivos, y un menor promedio de alquileres en contraste de los días no festivos, donde el promedio es mayor y de hecho hay una menor distribución de los datos, indicando de cierta forma una consistencia en los datos. 
 
-# Boxplot: Alquileres casuales por día festivo
+```{r, alquileres casuales por día festivo}
 ggplot(bicicletas,
        aes(x = holiday, y = casual, fill = holiday)) +
   geom_boxplot() +
@@ -177,8 +181,11 @@ ggplot(bicicletas,
   theme_minimal() +
   theme(legend.position = "none") +
   scale_fill_manual(values = paleta_colores)
+```
+Del boxplot anterior se observa entonces que la diferencia entre promedios casi no es significativa, por un lado, por el otro, se observa una mayor dispersión de los datos cuando el día festivo. Además se observan bastantes outliers cuando el día no es festivo. 
 
-# Boxplot: Alquileres registrados por día festivo
+
+```{r, alquileres regulares por día festivo}
 ggplot(bicicletas,
        aes(x = holiday, y = registered, fill = holiday)) +
   geom_boxplot() +
@@ -188,17 +195,19 @@ ggplot(bicicletas,
   scale_fill_manual(values = paleta_colores)
 
 ```
+Del gráfico anterior, se observa entonces un comportamiento el cual es esperado, debido a que los días no festivos, la cantidad de alquileres registrados debería tener un promedio alto, en comparación a los días festivos
 
 ## Boxplot por día trabajado
 
-(Agregar info)
+Para esta sección se crea la variable indicadora, con el fin de filtrar las observaciones y realizar el cálculo del promedio mediante visualización de cajas:
 
-```{r}
+```{r, Indicadora Día Laboral}
 # Factor para día laboral (0/1 -> No laboral / Laboral)
 bicicletas$workingday <- as.factor(bicicletas$workingday)
 levels(bicicletas$workingday) <- c("No laboral", "Laboral")
+```
 
-# Boxplot: Alquileres totales por día laboral
+```{r, alquileres totales por día laboral}
 ggplot(bicicletas,
        aes(x = workingday, y = cnt, fill = workingday)) +
   geom_boxplot() +
@@ -206,8 +215,11 @@ ggplot(bicicletas,
   theme_minimal() +
   theme(legend.position = "none") +
   scale_fill_manual(values = paleta_colores)
+```
+Del gráfico anterior se observa una mayor cantidad alquileres en los días no laborales, sin embargo, el promedio de alquileres de ambos días tienen un comportamiento parecido. 
 
-# Boxplot: Alquileres casuales por día laboral
+
+```{r, Alquileres casuales por día laboral}
 ggplot(bicicletas,
        aes(x = workingday, y = casual, fill = workingday)) +
   geom_boxplot() +
@@ -215,8 +227,10 @@ ggplot(bicicletas,
   theme_minimal() +
   theme(legend.position = "none") +
   scale_fill_manual(values = paleta_colores)
+```
+Gracias a este boxplot se puede hacer la diferencia de las personas que alquilan de manera casual, en donde se puede observar la diferencia que existe entre el promedio de alquileres en los días no laborales a los días que sí son laborales. Esto tiene sentido, pues las personas que alquilan de manera no casual lo hacen a modo recreativo los días que no son laborales. 
 
-# Boxplot: Alquileres registrados por día laboral
+```{r, alquileres regulares por día laboral}
 ggplot(bicicletas,
        aes(x = workingday, y = registered, fill = workingday)) +
   geom_boxplot() +
@@ -226,6 +240,8 @@ ggplot(bicicletas,
   scale_fill_manual(values = paleta_colores)
 
 ```
+
+Por otro lado, con el botplox anterior, se puede observar como las personas que usan la app con frecuencia, de hecho tienen mayor constancia los días que son laborales. Esto puede indicar varias razones, por ejemplo que utilicen el alquiler como medio de transporte, por ende hay una disminución del alquiler en días no laborales, ya que las personas no van al trabajo. Otra posible explicación se puede deber a que estas personas utilizan la bicicleta como parte de sus rutina de ejercicios los días laborales y descansan los días no laborales. 
 
 ```{r boxplots_continuos}
 variables_cont <- c("temp", "atemp", "hum", "windspeed")
