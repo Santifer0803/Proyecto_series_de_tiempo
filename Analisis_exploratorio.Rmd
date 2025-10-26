@@ -53,6 +53,10 @@ levels(bicicletas$weekday) <- c("Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb
 # Se discretiza la variable del clima
 bicicletas$weathersit <- as.factor(bicicletas$weathersit)
 levels(bicicletas$weathersit) <- c("Despejado", "Nublado", "Lluvioso/Nevado")
+
+# Se discretiza la variable de la estacion (para boxplot)
+bicicletas$season <- as.factor(bicicletas$season)
+levels(bicicletas$season) <- c("1", "2", "3", "4")
 ```
 
 
@@ -115,6 +119,33 @@ ggplot(bicicletas,
        aes(x = weathersit, y = registered, fill = weathersit)) +
   geom_boxplot() +
   labs(x = "Clima", y = "Cantidad de bibicletas") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_manual(values = paleta_colores)
+
+# Conteo de bicicletas (total) según estacion
+ggplot(bicicletas,
+       aes(x = season, y = cnt, fill = season)) +
+  geom_boxplot() +
+  labs(x = "Estación", y = "Cantidad de bibicletas") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_manual(values = paleta_colores)
+
+# Conteo de bicicletas casuales según estacion
+ggplot(bicicletas,
+       aes(x = season, y = casual, fill = season)) +
+  geom_boxplot() +
+  labs(x = "Estación", y = "Cantidad de bibicletas") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_manual(values = paleta_colores)
+
+# Conteo de bicicletas registradas según estacion
+ggplot(bicicletas,
+       aes(x = season, y = registered, fill = season)) +
+  geom_boxplot() +
+  labs(x = "Estación", y = "Cantidad de bibicletas") +
   theme_minimal() +
   theme(legend.position = "none") +
   scale_fill_manual(values = paleta_colores)
@@ -195,6 +226,22 @@ ggplot(bicicletas,
 
 ```
 
+```{r boxplots_continuos}
+variables_cont <- c("temp", "atemp", "hum", "windspeed")
+
+for (i in variables_cont) {
+  print(
+    ggplot(bicicletas, aes(x = "", y = .data[[i]], fill = i)) +
+      geom_boxplot() +
+      labs(title = paste("Distribución de", i),
+           x = NULL, y = "Valor") +
+      theme_minimal() +
+      theme(legend.position = "none") +
+      scale_fill_manual(values = paleta_colores)
+  )
+}
+
+```
 
 ## Series de tiempo
 
