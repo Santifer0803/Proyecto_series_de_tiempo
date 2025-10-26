@@ -206,6 +206,27 @@ acf(bicicletas$cnt, lag.max = 31, main = "ACF - Alquileres totales (1 mes)")
 ```
 Note que es un proceso de memoria larga, es decir, que la cantidad de bicicletas totales que se alquilaron hoy, dependen fuertemente de la cantidad de bicicletas que se alquilaron el día de ayer. 
 
+
+Para las variables que presentaron mucha correlación se aplica entonces la primer diferencia, con tal de observar el comportamiento: 
+
+
+```{r}
+acf(diff(bicicletas$temp), lag.max = 31, main = "ACF - Temperatura diferenciada (1 mes)")
+```
+
+se observa entonces una disminución en la correlación existente. Se aplica el mismo razonamiento a las otras variables: 
+
+```{r}
+acf(diff(bicicletas$atemp), lag.max = 31, main = "ACF - Sensación térmica diferenciada (1 mes)")
+```
+Al aplicar la primer diferencia se elimina el comportamiento persistente, lo que sugiere que las diferencias siguen un comportamiento ciclico y unas correlaciones bajas.
+
+```{r}
+acf(diff(bicicletas$cnt), lag.max = 31, main = "ACF - Alquileres totales diferenciados (1 mes)")
+```
+La correlación negativa indica que el número de bicicletas de hoy, afecta de manera inversa al alquiler de bicicleta del día de mañana. Se logra eliminar la tendencia gracias a la diferenciación. Se elimina la memoria temporal fuerte existente. 
+
+
 ## CCF
 
 A
