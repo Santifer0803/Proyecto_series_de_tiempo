@@ -15,7 +15,8 @@ pacman::p_load(astsa,
                ggplot2,
                lubridate,
                paletteer,
-               readr)
+               readr,
+               tidyr)
 ```
 
 Posteriormente, se cargan los datos requeridos.
@@ -313,62 +314,62 @@ ggplot(bicicletas, aes(x = dteday, y = cnt)) +
 
 Para esta sección se calculan las respectivas ACF de cada variable, tomando un lag de un mes para su visualización y posible interpretación:
 
-```{r}
-acf(bicicletas$temp, lag.max = 31, main = "ACF - Temperatura (1 mes)")
+```{r acf_temp}
+acf(bicicletas$temp, lag.max = 31, main = "")
 ```
 
 Como los datos son diarios, entonces se toma un rezago de 31 días, con el fin de simular un mes de lag. Seguidamente, se debe observar que hay una fuerte correlación y además, esta es significativa. Esto sugiere que la temperatura de hoy está fuertemente relacionada a la temperatura de ayer, lo cual tiene sentido, pues las temperaturas tienden a mantenerse constantes en una misma estación del año. Se nota además un comportamiento persistente, no hay oscilaciones. 
 
 Analizando por otro lado la temperatura percibida:
 
-```{r}
-acf(bicicletas$atemp, lag.max = 31, main = "ACF - Temperatura percibida (1 mes)")
+```{r acf_atemp}
+acf(bicicletas$atemp, lag.max = 31, main = "")
 ```
 
 No se observa un cambio significativo en relación de la variable anterior, lo que sugiere el mismo patrón de análisis.
 
-```{r}
-acf(bicicletas$hum, lag.max = 31, main = "ACF - Humedad (1 mes)")
+```{r acf_hum}
+acf(bicicletas$hum, lag.max = 31, main = "")
 ```
 
 Del gráfico anterior se puede inferir entonces que la variable humedad no tiene una memoria de largo plazo, pues al cabo de 2 o 3 días hay un rápido decaimiento del ACF, lo que indica que la humedad de hoy depende hasta cierto punto de la variable de ayer. Sin embargo, las condiciones de humedad sí pueden cambiar de manera significativa con respecto a los días. 
 
-```{r}
-acf(bicicletas$windspeed, lag.max = 31, main = "ACF - Velocidad del viento (1 mes)")
+```{r acf_windspeed}
+acf(bicicletas$windspeed, lag.max = 31, main = "")
 ```
 
 Note que en relación a la variable Velocidad del Viento se comporta de manera similar a la humedad, lo que sugiere un comportamiento de memoria corta, es decir, que no hay tanta relación de la velocidad del viento hoy con la velocidad del viento de ayer. 
 
-```{r}
-acf(bicicletas$casual, lag.max = 31, main = "ACF - Alquileres casuales (1 mes)")
+```{r acf_casual}
+acf(bicicletas$casual, lag.max = 31, main = "")
 ```
 
 La variable de alquileres casuales es de sumo interés, pues hay una regularidad en el patrón, lo que sugiere que las personas tienden a alquilar más la bicicletas cada cierto tiempo. Esto tiene sentido, pues las personas que alquilan bicicletas de manera casual lo harán con mayor probabilidad los fines de semana, implicando de esta forma que existe una estacionalidad semanal, es decir, un comportamiento similar a través del tiempo. 
 
 Por último se analiza la variable de alquileres totales: 
 
-```{r}
-acf(bicicletas$cnt, lag.max = 31, main = "ACF - Alquileres totales (1 mes)")
+```{r acf_cnt}
+acf(bicicletas$cnt, lag.max = 31, main = "")
 ```
 
 Note que es un proceso de memoria larga, es decir, que la cantidad de bicicletas totales que se alquilaron hoy dependen fuertemente de la cantidad de bicicletas que se alquilaron el día de ayer. 
 
 Para las variables que presentaron mucha correlación se aplica la primer diferencia, con tal de observar el comportamiento: 
 
-```{r}
-acf(diff(bicicletas$temp), lag.max = 31, main = "ACF - Temperatura diferenciada (1 mes)")
+```{r acf_diff_temp}
+acf(diff(bicicletas$temp), lag.max = 31, main = "")
 ```
 
 Se observa entonces una disminución en la correlación existente. Se aplica el mismo razonamiento a las otras variables: 
 
-```{r}
-acf(diff(bicicletas$atemp), lag.max = 31, main = "ACF - Sensación térmica diferenciada (1 mes)")
+```{r acf_diff_atemp}
+acf(diff(bicicletas$atemp), lag.max = 31, main = "")
 ```
 
 Al aplicar la primer diferencia se elimina el comportamiento persistente, lo que sugiere que las diferencias siguen un comportamiento cíclico y unas correlaciones bajas.
 
-```{r}
-acf(diff(bicicletas$cnt), lag.max = 31, main = "ACF - Alquileres totales diferenciados (1 mes)")
+```{r acf_diff_cnt}
+acf(diff(bicicletas$cnt), lag.max = 31, main = "")
 ```
 
 La correlación negativa indica que el número de bicicletas de hoy afecta de manera inversa al alquiler de bicicleta del día de mañana. Se logra eliminar la tendencia gracias a la diferenciación y se elimina la memoria temporal fuerte existente. 
@@ -527,7 +528,109 @@ data.frame(freq = cnt_temp$freq,
 
 ## Sobredispersión
 
-A
+Ahora se calculará la media y la varianza de la variable conteo separando por distintas variables categóricas, con el fin de determinar si los datos presentan sobredispersión.
+
+```{r media_varianza}
+# Media y varianza separando por clima
+medvar_wts <- bicicletas %>%
+  group_by(weathersit) %>%
+  summarise(media = mean(cnt),
+            varianza = var(cnt) / 1000) %>%
+  pivot_longer(cols = c(media, varianza),
+               names_to = "tipo",
+               values_to = "valor")
+
+# Gráfico de la media y varianza por clima
+ggplot(medvar_wts, aes(x = weathersit, y = valor, fill = tipo)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(x = "Clima",
+       y = "Valor",
+       fill = "") +
+  theme_minimal() +
+  scale_fill_manual(values = c(paleta_colores[2], paleta_colores[7]),
+                    labels = c("media" = "Media del conteo",
+                             "varianza" = "Varianza del conteo (en miles)"))
+
+# Media y varianza separando por día laboral
+medvar_wkd <- bicicletas %>%
+  group_by(workingday) %>%
+  summarise(media = mean(cnt),
+            varianza = var(cnt) / 1000) %>%
+  pivot_longer(cols = c(media, varianza),
+               names_to = "tipo",
+               values_to = "valor")
+
+# Gráfico de la media y varianza por día laboral
+ggplot(medvar_wkd, aes(x = factor(workingday), y = valor, fill = tipo)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(x = "Día laboral",
+       y = "Valor",
+       fill = "") +
+  theme_minimal() +
+  scale_fill_manual(values = c(paleta_colores[2], paleta_colores[7]),
+                    labels = c("media" = "Media del conteo",
+                             "varianza" = "Varianza del conteo (en miles)"))
+
+# Media y varianza separando por día de la semana
+medvar_wd <- bicicletas %>%
+  group_by(weekday) %>%
+  summarise(media = mean(cnt),
+            varianza = var(cnt) / 1000) %>%
+  pivot_longer(cols = c(media, varianza),
+               names_to = "tipo",
+               values_to = "valor")
+
+# Gráfico de la media y varianza por día de la semana
+ggplot(medvar_wd, aes(x = weekday, y = valor, fill = tipo)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(x = "Día de la semana",
+       y = "Valor",
+       fill = "") +
+  theme_minimal() +
+  scale_fill_manual(values = c(paleta_colores[2], paleta_colores[7]),
+                    labels = c("media" = "Media del conteo",
+                             "varianza" = "Varianza del conteo (en miles)"))
+
+# Media y varianza separando por día festivo
+medvar_hd <- bicicletas %>%
+  group_by(holiday) %>%
+  summarise(media = mean(cnt),
+            varianza = var(cnt) / 1000) %>%
+  pivot_longer(cols = c(media, varianza),
+               names_to = "tipo",
+               values_to = "valor")
+
+# Gráfico de la media y varianza por día de festivo
+ggplot(medvar_hd, aes(x = factor(holiday), y = valor, fill = tipo)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(x = "Día festivo",
+       y = "Valor",
+       fill = "") +
+  theme_minimal() +
+  scale_fill_manual(values = c(paleta_colores[2], paleta_colores[7]),
+                    labels = c("media" = "Media del conteo",
+                             "varianza" = "Varianza del conteo (en miles)"))
+
+# Media y varianza separando por estación
+medvar_ssn <- bicicletas %>%
+  group_by(season) %>%
+  summarise(media = mean(cnt),
+            varianza = var(cnt) / 1000) %>%
+  pivot_longer(cols = c(media, varianza),
+               names_to = "tipo",
+               values_to = "valor")
+
+# Gráfico de la media y varianza por estación
+ggplot(medvar_ssn, aes(x = season, y = valor, fill = tipo)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(x = "Estación",
+       y = "Valor",
+       fill = "") +
+  theme_minimal() +
+  scale_fill_manual(values = c(paleta_colores[2], paleta_colores[7]),
+                    labels = c("media" = "Media del conteo",
+                             "varianza" = "Varianza del conteo (en miles)"))
+```
 
 ## Periodogramas
 
