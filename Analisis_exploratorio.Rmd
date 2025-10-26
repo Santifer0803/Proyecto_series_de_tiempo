@@ -123,7 +123,50 @@ ggplot(bicicletas,
 
 ## Series de tiempo
 
-A
+Se grafica las series de tiempo de las variables coherentes: no se grafican ni variables categoricas ni variables redundantes como el dia de la semana.  
+
+```{r series_de_tiempo}
+#Temperatura
+ggplot(bicicletas, aes(x = dteday, y = temp)) +
+  geom_line(color = paleta_colores[1], linewidth = 1) +
+  labs(x = "Fecha", y = "Temperatura") +
+  theme_minimal()
+
+#Temperatura percibida
+ggplot(bicicletas, aes(x = dteday, y = atemp)) +
+  geom_line(color = paleta_colores[3], linewidth = 1) +
+  labs(x = "Fecha", y = "Sensación de temperatura") +
+  theme_minimal()
+
+#Humedad
+ggplot(bicicletas, aes(x = dteday, y = hum)) +
+  geom_line(color = paleta_colores[5], linewidth = 1) +
+  labs(x = "Fecha", y = "Humedad") +
+  theme_minimal()
+
+#Velocidad del viento
+ggplot(bicicletas, aes(x = dteday, y = windspeed)) +
+  geom_line(color = paleta_colores[7], linewidth = 1) +
+  labs(x = "Fecha", y = "Velocidad del viento") +
+  theme_minimal()
+
+#Casual y registererd
+ggplot() +
+  geom_line(data = bicicletas, aes(x = dteday, y = casual, color = "Alquileres casuales"), linewidth = 1) +
+  geom_line(data = bicicletas, aes(x = dteday, y = registered, color = "Alquileres registrados"), linewidth = 1) +
+  scale_color_manual(values = c("Alquileres casuales" = paleta_colores[8],
+                                "Alquileres registrados" = paleta_colores[11])) +
+  labs(x = "Fecha", y = "Cantidad",
+       color = "Variable") +
+  theme_minimal()
+
+#Alquileres totales
+ggplot(bicicletas, aes(x = dteday, y = cnt)) +
+  geom_line(color = paleta_colores[2], linewidth = 1) +
+  labs(x = "Fecha", y = "Bicicletas alquiladas") +
+  theme_minimal()
+```
+
 
 ## ACF
 
