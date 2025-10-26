@@ -7,9 +7,9 @@ output: html_document
 
 # Preparación inicial
 
-Inicialmente, descargamos las librarías requeridas.
+Inicialmente, descargamos las librerías requeridas.
 
-```{r librarias}
+```{r librerias}
 pacman::p_load(astsa,
                dplyr,
                ggplot2,
@@ -59,7 +59,6 @@ bicicletas$season <- as.factor(bicicletas$season)
 levels(bicicletas$season) <- c("1", "2", "3", "4")
 ```
 
-
 # Análisis exploratorio de datos
 
 A través de diversas herramientas, se busca entender el contenido de los datos. Con esto, se pueden evidenciar variables relevantes e interacciones entre los diversos factores de la información disponible.
@@ -96,7 +95,7 @@ ggplot(bicicletas,
   theme(legend.position = "none") +
   scale_fill_manual(values = paleta_colores)
 
-# Conteo de bicicletas según día de la semana
+# Conteo de bicicletas según el clima
 ggplot(bicicletas,
        aes(x = weathersit, y = cnt, fill = weathersit)) +
   geom_boxplot() +
@@ -105,7 +104,7 @@ ggplot(bicicletas,
   theme(legend.position = "none") +
   scale_fill_manual(values = paleta_colores)
 
-# Conteo de bicicletas casuales según día de la semana
+# Conteo de bicicletas casuales según el clima
 ggplot(bicicletas,
        aes(x = weathersit, y = casual, fill = weathersit)) +
   geom_boxplot() +
@@ -114,7 +113,7 @@ ggplot(bicicletas,
   theme(legend.position = "none") +
   scale_fill_manual(values = paleta_colores)
 
-# Conteo de bicicletas registradas según día de la semana
+# Conteo de bicicletas registradas según el clima
 ggplot(bicicletas,
        aes(x = weathersit, y = registered, fill = weathersit)) +
   geom_boxplot() +
@@ -123,7 +122,7 @@ ggplot(bicicletas,
   theme(legend.position = "none") +
   scale_fill_manual(values = paleta_colores)
 
-# Conteo de bicicletas (total) según estacion
+# Conteo de bicicletas (total) según estación
 ggplot(bicicletas,
        aes(x = season, y = cnt, fill = season)) +
   geom_boxplot() +
@@ -132,7 +131,7 @@ ggplot(bicicletas,
   theme(legend.position = "none") +
   scale_fill_manual(values = paleta_colores)
 
-# Conteo de bicicletas casuales según estacion
+# Conteo de bicicletas casuales según estación
 ggplot(bicicletas,
        aes(x = season, y = casual, fill = season)) +
   geom_boxplot() +
@@ -141,7 +140,7 @@ ggplot(bicicletas,
   theme(legend.position = "none") +
   scale_fill_manual(values = paleta_colores)
 
-# Conteo de bicicletas registradas según estacion
+# Conteo de bicicletas registradas según estación
 ggplot(bicicletas,
        aes(x = season, y = registered, fill = season)) +
   geom_boxplot() +
@@ -153,7 +152,7 @@ ggplot(bicicletas,
 
 ## Boxplot por día festivo:
 
-(Agregar INFO)
+(Agregar info)
 
 ```{r}
 # Factor para día festivo (0/1 -> No festivo / Festivo)
@@ -188,7 +187,8 @@ ggplot(bicicletas,
   scale_fill_manual(values = paleta_colores)
 
 ```
-##Boxplot por día trabajado
+
+## Boxplot por día trabajado
 
 (Agregar info)
 
@@ -240,44 +240,42 @@ for (i in variables_cont) {
       scale_fill_manual(values = paleta_colores)
   )
 }
-
 ```
 
 ## Series de tiempo
 
-Se grafica las series de tiempo de las variables coherentes: no se grafican ni variables categoricas ni variables redundantes como el dia de la semana.  
+Se grafican las series de tiempo de las variables coherentes: no se grafican ni variables categóricas ni variables redundantes como el día de la semana.  
 
 ```{r series_de_tiempo}
-#Temperatura
+# Temperatura
 ggplot(bicicletas, aes(x = dteday, y = temp)) +
   geom_line(color = paleta_colores[1], linewidth = 1) +
   geom_smooth(method = "lm", se = FALSE, color = paleta_colores[7], linewidth = 1.2) +
   labs(x = "Fecha", y = "Temperatura") +
   theme_minimal()
 
-
-#Temperatura percibida
+# Temperatura percibida
 ggplot(bicicletas, aes(x = dteday, y = atemp)) +
   geom_line(color = paleta_colores[2], linewidth = 1) +
   geom_smooth(method = "lm", se = FALSE, color = paleta_colores[8], linewidth = 1.2) +
   labs(x = "Fecha", y = "Temperatura percibida") +
   theme_minimal()
 
-#Humedad
+# Humedad
 ggplot(bicicletas, aes(x = dteday, y = hum)) +
   geom_line(color = paleta_colores[3], linewidth = 1) +
   geom_smooth(method = "lm", se = FALSE, color = paleta_colores[9], linewidth = 1.2) +
   labs(x = "Fecha", y = "Humedad") +
   theme_minimal()
 
-#Velocidad del viento
+# Velocidad del viento
 ggplot(bicicletas, aes(x = dteday, y = windspeed)) +
   geom_line(color = paleta_colores[4], linewidth = 1) +
   geom_smooth(method = "lm", se = FALSE, color = paleta_colores[10], linewidth = 1.2) +
   labs(x = "Fecha", y = "Velocidad del viento") +
   theme_minimal()
 
-#Casual y registererd
+# Casual y registererd
 ggplot() +
   # Línea 1: casuales
   geom_line(data = bicicletas, aes(x = dteday, y = casual, color = "Alquileres casuales"), linewidth = 1) +
@@ -293,7 +291,7 @@ ggplot() +
   geom_smooth(data = bicicletas, aes(x = dteday, y = registered, color = "Alquileres registrados"),
               method = "lm", se = FALSE, linewidth = 1.2, linetype = "dashed") +
 
-  # Colores personalizados desde tu paleta
+  # Colores personalizados desde la paleta
   scale_color_manual(values = c(
     "Alquileres casuales" = paleta_colores[8],
     "Alquileres registrados" = paleta_colores[12]
@@ -303,7 +301,7 @@ ggplot() +
   theme_minimal()
 
 
-#Alquileres totales
+# Alquileres totales
 ggplot(bicicletas, aes(x = dteday, y = cnt)) +
   geom_line(color = paleta_colores[1], linewidth = 1) +
   geom_smooth(method = "lm", se = FALSE, color = paleta_colores[7], linewidth = 1.2) +
@@ -311,73 +309,221 @@ ggplot(bicicletas, aes(x = dteday, y = cnt)) +
   theme_minimal()
 ```
 
-
 ## ACF
 
-Para esta sección se calculan los respectivos ACF de cada variable, tomando un lag de un mes para su visualización y posible interpretación:
+Para esta sección se calculan las respectivas ACF de cada variable, tomando un lag de un mes para su visualización y posible interpretación:
 
 ```{r}
 acf(bicicletas$temp, lag.max = 31, main = "ACF - Temperatura (1 mes)")
 ```
-Como los datos son diarios, entonces se toma un rezago de 31 días, con el fin de simular un mes de lag. Seguidamente, se debe observar que hay una fuerte correlación y además, ésta es significativa. Lo que sugiere que la temperatura de hoy está fuertemente relacionada a la temperatura de ayer. Lo cual tiene sentido, pues las temperaturas tienden a mantenerse constantes en una misma estación del año. Se nota además un comportamiento persistente, no hay oscilaciones. 
+
+Como los datos son diarios, entonces se toma un rezago de 31 días, con el fin de simular un mes de lag. Seguidamente, se debe observar que hay una fuerte correlación y además, esta es significativa. Esto sugiere que la temperatura de hoy está fuertemente relacionada a la temperatura de ayer, lo cual tiene sentido, pues las temperaturas tienden a mantenerse constantes en una misma estación del año. Se nota además un comportamiento persistente, no hay oscilaciones. 
 
 Analizando por otro lado la temperatura percibida:
 
 ```{r}
 acf(bicicletas$atemp, lag.max = 31, main = "ACF - Temperatura percibida (1 mes)")
 ```
+
 No se observa un cambio significativo en relación de la variable anterior, lo que sugiere el mismo patrón de análisis.
 
 ```{r}
 acf(bicicletas$hum, lag.max = 31, main = "ACF - Humedad (1 mes)")
 ```
-Del gráfico anterior se puede inferir entonces que la variable humedad no tiene una memoria de largo plazo, pues al cabo de 2 o 3 días hay un rápido decaimiento del ACF, lo que indica que la humedad de hoy depende hasta cierto de la variable de ayer. Sin embargo, las condiciones de humedad si pueden cambiar de manera significativa con respecto a los días. 
+
+Del gráfico anterior se puede inferir entonces que la variable humedad no tiene una memoria de largo plazo, pues al cabo de 2 o 3 días hay un rápido decaimiento del ACF, lo que indica que la humedad de hoy depende hasta cierto punto de la variable de ayer. Sin embargo, las condiciones de humedad sí pueden cambiar de manera significativa con respecto a los días. 
 
 ```{r}
 acf(bicicletas$windspeed, lag.max = 31, main = "ACF - Velocidad del viento (1 mes)")
 ```
+
 Note que en relación a la variable Velocidad del Viento se comporta de manera similar a la humedad, lo que sugiere un comportamiento de memoria corta, es decir, que no hay tanta relación de la velocidad del viento hoy con la velocidad del viento de ayer. 
 
 ```{r}
 acf(bicicletas$casual, lag.max = 31, main = "ACF - Alquileres casuales (1 mes)")
 ```
-La variable de Alquileres casuales es de sumo interés, pues note que hay una regularidad en el patrón, lo que sugiere que las personas tienden a alquilar más la bicicletas, cada cierto tiempo. Esto tiene sentido, pues las personas que alquilan bicicletas de manera casual lo harán con mayor probabilidad los findes de semana, implicando de esta forma que existe una estacionalidad semanal, es decir, un comportamiento similar a través del tiempo. 
+
+La variable de alquileres casuales es de sumo interés, pues hay una regularidad en el patrón, lo que sugiere que las personas tienden a alquilar más la bicicletas cada cierto tiempo. Esto tiene sentido, pues las personas que alquilan bicicletas de manera casual lo harán con mayor probabilidad los fines de semana, implicando de esta forma que existe una estacionalidad semanal, es decir, un comportamiento similar a través del tiempo. 
 
 Por último se analiza la variable de alquileres totales: 
 
 ```{r}
 acf(bicicletas$cnt, lag.max = 31, main = "ACF - Alquileres totales (1 mes)")
 ```
-Note que es un proceso de memoria larga, es decir, que la cantidad de bicicletas totales que se alquilaron hoy, dependen fuertemente de la cantidad de bicicletas que se alquilaron el día de ayer. 
 
+Note que es un proceso de memoria larga, es decir, que la cantidad de bicicletas totales que se alquilaron hoy dependen fuertemente de la cantidad de bicicletas que se alquilaron el día de ayer. 
 
-Para las variables que presentaron mucha correlación se aplica entonces la primer diferencia, con tal de observar el comportamiento: 
-
+Para las variables que presentaron mucha correlación se aplica la primer diferencia, con tal de observar el comportamiento: 
 
 ```{r}
 acf(diff(bicicletas$temp), lag.max = 31, main = "ACF - Temperatura diferenciada (1 mes)")
 ```
 
-se observa entonces una disminución en la correlación existente. Se aplica el mismo razonamiento a las otras variables: 
+Se observa entonces una disminución en la correlación existente. Se aplica el mismo razonamiento a las otras variables: 
 
 ```{r}
 acf(diff(bicicletas$atemp), lag.max = 31, main = "ACF - Sensación térmica diferenciada (1 mes)")
 ```
-Al aplicar la primer diferencia se elimina el comportamiento persistente, lo que sugiere que las diferencias siguen un comportamiento ciclico y unas correlaciones bajas.
+
+Al aplicar la primer diferencia se elimina el comportamiento persistente, lo que sugiere que las diferencias siguen un comportamiento cíclico y unas correlaciones bajas.
 
 ```{r}
 acf(diff(bicicletas$cnt), lag.max = 31, main = "ACF - Alquileres totales diferenciados (1 mes)")
 ```
-La correlación negativa indica que el número de bicicletas de hoy, afecta de manera inversa al alquiler de bicicleta del día de mañana. Se logra eliminar la tendencia gracias a la diferenciación. Se elimina la memoria temporal fuerte existente. 
 
+La correlación negativa indica que el número de bicicletas de hoy afecta de manera inversa al alquiler de bicicleta del día de mañana. Se logra eliminar la tendencia gracias a la diferenciación y se elimina la memoria temporal fuerte existente. 
 
 ## CCF
 
-A
+Seguidamente se calculan las CCF de la variable conteo con el resto de las variables, tomando igualmente un lag de un mes para su visualización y posible interpretación.
+
+```{r CCFs}
+# CCF entre el conteo total y la velocidad del viento
+ccf(bicicletas$cnt, bicicletas$windspeed, lag.max = 31, main = "", ylab = "CCF")
+
+# CCF entre el conteo total y la humedad
+ccf(bicicletas$cnt, bicicletas$hum, lag.max = 31, main = "", ylab = "CCF")
+
+# CCF entre el conteo total y la sensación térmica
+ccf(bicicletas$cnt, bicicletas$atemp, lag.max = 31, main = "", ylab = "CCF")
+
+# CCF entre el conteo total y la temperatura
+ccf(bicicletas$cnt, bicicletas$temp, lag.max = 31, main = "", ylab = "CCF")
+```
 
 ## Coherencia
 
-A
+En este sección se visualizan las coherencias cuadradads entre la variable de conteo y diversas variable coherentes, con el fin de medir la intensidad de la relación lineal entre las dos series en cada frecuencia.
+
+```{r coherencias}
+# Se calcula el espectro cruzado del conteo y la velocidad del viento
+cnt_ws <- mvspec(
+  cbind(
+    ts(
+      bicicletas$cnt,
+      start = c(2011, 1, 1),
+      frequency = 365
+    ),
+    ts(
+      bicicletas$windspeed,
+      start = c(2011, 1, 1),
+      frequency = 365
+    )),
+  kernel = kernel("modified.daniell", c(3, 3)),
+  taper = .1,
+  main = "",
+  plot = FALSE
+)
+
+# Valor crítico para un nivel de significancia de 95%
+C <- qf(.95, 2, cnt_ws$df - 2) / (((cnt_ws$df/2) - 1) + qf(.95, 2, cnt_ws$df - 2))
+
+# Se grafica la coherencia cuadrada
+data.frame(freq = cnt_ws$freq,
+           coh = cnt_ws$coh) %>%
+  ggplot(aes(x = freq, y = coh)) +
+  geom_line(color = paleta_colores[4], linewidth = 1) +
+  geom_hline(yintercept = C, color = paleta_colores[9]) +
+  labs(x = "Frecuencia (diaria)",
+       y = "Coherencia cuadrada") +
+  theme_minimal(base_size = 14)
+
+# Se calcula el espectro cruzado del conteo y la humedad
+cnt_hum <- mvspec(
+  cbind(
+    ts(
+      bicicletas$cnt,
+      start = c(2011, 1, 1),
+      frequency = 365
+    ),
+    ts(
+      bicicletas$hum,
+      start = c(2011, 1, 1),
+      frequency = 365
+    )),
+  kernel = kernel("modified.daniell", c(3, 3)),
+  taper = .1,
+  main = "",
+  plot = FALSE
+)
+
+# Valor crítico para un nivel de significancia de 95%
+C <- qf(.95, 2, cnt_hum$df - 2) / (((cnt_hum$df/2) - 1) + qf(.95, 2, cnt_hum$df - 2))
+
+# Se grafica la coherencia cuadrada
+data.frame(freq = cnt_hum$freq,
+           coh = cnt_hum$coh) %>%
+  ggplot(aes(x = freq, y = coh)) +
+  geom_line(color = paleta_colores[4], linewidth = 1) +
+  geom_hline(yintercept = C, color = paleta_colores[9]) +
+  labs(x = "Frecuencia (diaria)",
+       y = "Coherencia cuadrada") +
+  theme_minimal(base_size = 14)
+
+# Se calcula el espectro cruzado del conteo y la sensación térmica
+cnt_atemp <- mvspec(
+  cbind(
+    ts(
+      bicicletas$cnt,
+      start = c(2011, 1, 1),
+      frequency = 365
+    ),
+    ts(
+      bicicletas$atemp,
+      start = c(2011, 1, 1),
+      frequency = 365
+    )),
+  kernel = kernel("modified.daniell", c(3, 3)),
+  taper = .1,
+  main = "",
+  plot = FALSE
+)
+
+# Valor crítico para un nivel de significancia de 95%
+C <- qf(.95, 2, cnt_atemp$df - 2) / (((cnt_atemp$df/2) - 1) + qf(.95, 2, cnt_atemp$df - 2))
+
+# Se grafica la coherencia cuadrada
+data.frame(freq = cnt_atemp$freq,
+           coh = cnt_atemp$coh) %>%
+  ggplot(aes(x = freq, y = coh)) +
+  geom_line(color = paleta_colores[4], linewidth = 1) +
+  geom_hline(yintercept = C, color = paleta_colores[9]) +
+  labs(x = "Frecuencia (diaria)",
+       y = "Coherencia cuadrada") +
+  theme_minimal(base_size = 14)
+
+# Se calcula el espectro cruzado del conteo y la temperatura
+cnt_temp <- mvspec(
+  cbind(
+    ts(
+      bicicletas$cnt,
+      start = c(2011, 1, 1),
+      frequency = 365
+    ),
+    ts(
+      bicicletas$temp,
+      start = c(2011, 1, 1),
+      frequency = 365
+    )),
+  kernel = kernel("modified.daniell", c(3, 3)),
+  taper = .1,
+  main = "",
+  plot = FALSE
+)
+
+# Valor crítico para un nivel de significancia de 95%
+C <- qf(.95, 2, cnt_temp$df - 2) / (((cnt_temp$df/2) - 1) + qf(.95, 2, cnt_temp$df - 2))
+
+# Se grafica la coherencia cuadrada
+data.frame(freq = cnt_temp$freq,
+           coh = cnt_temp$coh) %>%
+  ggplot(aes(x = freq, y = coh)) +
+  geom_line(color = paleta_colores[4], linewidth = 1) +
+  geom_hline(yintercept = C, color = paleta_colores[9]) +
+  labs(x = "Frecuencia (diaria)",
+       y = "Coherencia cuadrada") +
+  theme_minimal(base_size = 14)
+```
 
 ## Sobredispersión
 
