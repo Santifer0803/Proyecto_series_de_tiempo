@@ -251,40 +251,62 @@ Se grafica las series de tiempo de las variables coherentes: no se grafican ni v
 #Temperatura
 ggplot(bicicletas, aes(x = dteday, y = temp)) +
   geom_line(color = paleta_colores[1], linewidth = 1) +
+  geom_smooth(method = "lm", se = FALSE, color = paleta_colores[7], linewidth = 1.2) +
   labs(x = "Fecha", y = "Temperatura") +
   theme_minimal()
 
+
 #Temperatura percibida
 ggplot(bicicletas, aes(x = dteday, y = atemp)) +
-  geom_line(color = paleta_colores[3], linewidth = 1) +
-  labs(x = "Fecha", y = "Sensación de temperatura") +
+  geom_line(color = paleta_colores[2], linewidth = 1) +
+  geom_smooth(method = "lm", se = FALSE, color = paleta_colores[8], linewidth = 1.2) +
+  labs(x = "Fecha", y = "Temperatura percibida") +
   theme_minimal()
 
 #Humedad
 ggplot(bicicletas, aes(x = dteday, y = hum)) +
-  geom_line(color = paleta_colores[5], linewidth = 1) +
+  geom_line(color = paleta_colores[3], linewidth = 1) +
+  geom_smooth(method = "lm", se = FALSE, color = paleta_colores[9], linewidth = 1.2) +
   labs(x = "Fecha", y = "Humedad") +
   theme_minimal()
 
 #Velocidad del viento
 ggplot(bicicletas, aes(x = dteday, y = windspeed)) +
-  geom_line(color = paleta_colores[7], linewidth = 1) +
+  geom_line(color = paleta_colores[4], linewidth = 1) +
+  geom_smooth(method = "lm", se = FALSE, color = paleta_colores[10], linewidth = 1.2) +
   labs(x = "Fecha", y = "Velocidad del viento") +
   theme_minimal()
 
 #Casual y registererd
 ggplot() +
+  # Línea 1: casuales
   geom_line(data = bicicletas, aes(x = dteday, y = casual, color = "Alquileres casuales"), linewidth = 1) +
+  geom_smooth(data = bicicletas, aes(x = dteday, y = casual),
+              method = "lm", se = FALSE, color = "black", linewidth = 1.8, linetype = "dashed") +
+  geom_smooth(data = bicicletas, aes(x = dteday, y = casual, color = "Alquileres casuales"),
+              method = "lm", se = FALSE, linewidth = 1.2, linetype = "dashed") +
+  
+  # Línea 2: registrados
   geom_line(data = bicicletas, aes(x = dteday, y = registered, color = "Alquileres registrados"), linewidth = 1) +
-  scale_color_manual(values = c("Alquileres casuales" = paleta_colores[8],
-                                "Alquileres registrados" = paleta_colores[11])) +
-  labs(x = "Fecha", y = "Cantidad",
-       color = "Variable") +
+  geom_smooth(data = bicicletas, aes(x = dteday, y = registered),
+              method = "lm", se = FALSE, color = "black", linewidth = 1.8, linetype = "dashed") +
+  geom_smooth(data = bicicletas, aes(x = dteday, y = registered, color = "Alquileres registrados"),
+              method = "lm", se = FALSE, linewidth = 1.2, linetype = "dashed") +
+
+  # Colores personalizados desde tu paleta
+  scale_color_manual(values = c(
+    "Alquileres casuales" = paleta_colores[8],
+    "Alquileres registrados" = paleta_colores[12]
+  )) +
+  
+  labs(x = "Fecha", y = "Cantidad", color = "Variable") +
   theme_minimal()
+
 
 #Alquileres totales
 ggplot(bicicletas, aes(x = dteday, y = cnt)) +
-  geom_line(color = paleta_colores[2], linewidth = 1) +
+  geom_line(color = paleta_colores[1], linewidth = 1) +
+  geom_smooth(method = "lm", se = FALSE, color = paleta_colores[7], linewidth = 1.2) +
   labs(x = "Fecha", y = "Bicicletas alquiladas") +
   theme_minimal()
 ```
