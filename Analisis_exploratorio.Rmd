@@ -298,20 +298,16 @@ ggplot() +
   geom_line(data = bicicletas, aes(x = dteday, y = casual, color = "Alquileres casuales"), linewidth = 1) +
   geom_smooth(data = bicicletas, aes(x = dteday, y = casual),
               method = "lm", se = FALSE, color = "black", linewidth = 1.8, linetype = "dashed") +
-  geom_smooth(data = bicicletas, aes(x = dteday, y = casual, color = "Alquileres casuales"),
-              method = "lm", se = FALSE, linewidth = 1.2, linetype = "dashed") +
   
   # Línea 2: registrados
   geom_line(data = bicicletas, aes(x = dteday, y = registered, color = "Alquileres registrados"), linewidth = 1) +
   geom_smooth(data = bicicletas, aes(x = dteday, y = registered),
               method = "lm", se = FALSE, color = "black", linewidth = 1.8, linetype = "dashed") +
-  geom_smooth(data = bicicletas, aes(x = dteday, y = registered, color = "Alquileres registrados"),
-              method = "lm", se = FALSE, linewidth = 1.2, linetype = "dashed") +
 
   # Colores personalizados desde la paleta
   scale_color_manual(values = c(
-    "Alquileres casuales" = paleta_colores[8],
-    "Alquileres registrados" = paleta_colores[12]
+    "Alquileres casuales" = paleta_colores[3],
+    "Alquileres registrados" = paleta_colores[6]
   )) +
   
   labs(x = "Fecha", y = "Cantidad", color = "Variable") +
