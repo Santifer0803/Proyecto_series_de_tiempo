@@ -431,15 +431,9 @@ cnt_ws <- mvspec(
 # Valor crítico para un nivel de significancia de 95%
 C <- qf(.95, 2, cnt_ws$df - 2) / (((cnt_ws$df/2) - 1) + qf(.95, 2, cnt_ws$df - 2))
 
-# Se grafica la coherencia cuadrada
-data.frame(freq = cnt_ws$freq,
-           coh = cnt_ws$coh) %>%
-  ggplot(aes(x = freq, y = coh)) +
-  geom_line(color = paleta_colores[4], linewidth = 1) +
-  geom_hline(yintercept = C, color = paleta_colores[9]) +
-  labs(x = "Frecuencia (diaria)",
-       y = "Coherencia cuadrada") +
-  theme_minimal(base_size = 14)
+plot(cnt_ws, plot.type = "coh", ci.lty = 2, xlab = "Frecuencia (diaria)", 
+     ylab = "Coherencia cuadrada", main = "", col = paleta_colores[3])
+abline(h = C, col = paleta_colores[5])
 
 # Se calcula el espectro cruzado del conteo y la humedad
 cnt_hum <- mvspec(
@@ -463,15 +457,9 @@ cnt_hum <- mvspec(
 # Valor crítico para un nivel de significancia de 95%
 C <- qf(.95, 2, cnt_hum$df - 2) / (((cnt_hum$df/2) - 1) + qf(.95, 2, cnt_hum$df - 2))
 
-# Se grafica la coherencia cuadrada
-data.frame(freq = cnt_hum$freq,
-           coh = cnt_hum$coh) %>%
-  ggplot(aes(x = freq, y = coh)) +
-  geom_line(color = paleta_colores[4], linewidth = 1) +
-  geom_hline(yintercept = C, color = paleta_colores[9]) +
-  labs(x = "Frecuencia (diaria)",
-       y = "Coherencia cuadrada") +
-  theme_minimal(base_size = 14)
+plot(cnt_hum, plot.type = "coh", ci.lty = 2, xlab = "Frecuencia (diaria)", 
+     ylab = "Coherencia cuadrada", main = "", col = paleta_colores[3])
+abline(h = C, col = paleta_colores[5])
 
 # Se calcula el espectro cruzado del conteo y la sensación térmica
 cnt_atemp <- mvspec(
@@ -495,15 +483,9 @@ cnt_atemp <- mvspec(
 # Valor crítico para un nivel de significancia de 95%
 C <- qf(.95, 2, cnt_atemp$df - 2) / (((cnt_atemp$df/2) - 1) + qf(.95, 2, cnt_atemp$df - 2))
 
-# Se grafica la coherencia cuadrada
-data.frame(freq = cnt_atemp$freq,
-           coh = cnt_atemp$coh) %>%
-  ggplot(aes(x = freq, y = coh)) +
-  geom_line(color = paleta_colores[4], linewidth = 1) +
-  geom_hline(yintercept = C, color = paleta_colores[9]) +
-  labs(x = "Frecuencia (diaria)",
-       y = "Coherencia cuadrada") +
-  theme_minimal(base_size = 14)
+plot(cnt_atemp, plot.type = "coh", ci.lty = 2, xlab = "Frecuencia (diaria)", 
+     ylab = "Coherencia cuadrada", main = "", col = paleta_colores[3])
+abline(h = C, col = paleta_colores[5])
 
 # Se calcula el espectro cruzado del conteo y la temperatura
 cnt_temp <- mvspec(
@@ -528,14 +510,9 @@ cnt_temp <- mvspec(
 C <- qf(.95, 2, cnt_temp$df - 2) / (((cnt_temp$df/2) - 1) + qf(.95, 2, cnt_temp$df - 2))
 
 # Se grafica la coherencia cuadrada
-data.frame(freq = cnt_temp$freq,
-           coh = cnt_temp$coh) %>%
-  ggplot(aes(x = freq, y = coh)) +
-  geom_line(color = paleta_colores[4], linewidth = 1) +
-  geom_hline(yintercept = C, color = paleta_colores[9]) +
-  labs(x = "Frecuencia (diaria)",
-       y = "Coherencia cuadrada") +
-  theme_minimal(base_size = 14)
+plot(cnt_temp, plot.type = "coh", ci.lty = 2, xlab = "Frecuencia (diaria)", 
+     ylab = "Coherencia cuadrada", main = "", col = paleta_colores[3])
+abline(h = C, col = paleta_colores[5])
 ```
 
 ## Sobredispersión
