@@ -58,6 +58,10 @@ levels(bicicletas$weathersit) <- c("Despejado", "Nublado", "Lluvioso/Nevado")
 # Se discretiza la variable de la estacion (para boxplot)
 bicicletas$season <- as.factor(bicicletas$season)
 levels(bicicletas$season) <- c("1", "2", "3", "4")
+
+# Factor para día festivo (0/1 -> No festivo / Festivo)
+bicicletas$holiday <- as.factor(bicicletas$holiday)
+levels(bicicletas$holiday) <- c("No festivo", "Festivo")
 ```
 
 # Análisis exploratorio de datos
@@ -155,13 +159,6 @@ ggplot(bicicletas,
 
 Para esta sección se agregan boxplots de las variables contra los días festivos, con el fin de observar la distribución de los alquileres en estas fechas.
 
-```{r indicadora_dia_festivo}
-# Factor para día festivo (0/1 -> No festivo / Festivo)
-bicicletas$holiday <- as.factor(bicicletas$holiday)
-levels(bicicletas$holiday) <- c("No festivo", "Festivo")
-```
-
-
 ```{r alquileres_totales_por_días_festivos}
 ggplot(bicicletas,
        aes(x = holiday, y = cnt, fill = holiday)) +
@@ -193,7 +190,6 @@ ggplot(bicicletas,
   theme_minimal() +
   theme(legend.position = "none") +
   scale_fill_manual(values = paleta_colores)
-
 ```
 Del gráfico anterior, se observa entonces un comportamiento el cual es esperado, debido a que los días no festivos, la cantidad de alquileres registrados debería tener un promedio alto, en comparación a los días festivos
 
@@ -238,7 +234,6 @@ ggplot(bicicletas,
   theme_minimal() +
   theme(legend.position = "none") +
   scale_fill_manual(values = paleta_colores)
-
 ```
 
 Por otro lado, con el botplox anterior, se puede observar como las personas que usan la app con frecuencia, de hecho tienen mayor constancia los días que son laborales. Esto puede indicar varias razones, por ejemplo que utilicen el alquiler como medio de transporte, por ende hay una disminución del alquiler en días no laborales, ya que las personas no van al trabajo. Otra posible explicación se puede deber a que estas personas utilizan la bicicleta como parte de sus rutina de ejercicios los días laborales y descansan los días no laborales. 
