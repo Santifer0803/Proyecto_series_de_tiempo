@@ -14,8 +14,10 @@ pacman::p_load(astsa,
                dplyr,
                ggplot2,
                lubridate,
+               MASS,
                paletteer,
                readr,
+               statmod,
                tidyr)
 ```
 
@@ -59,3 +61,52 @@ levels(bicicletas$weathersit) <- c("Despejado", "Nublado", "Lluvioso/Nevado")
 bicicletas$season <- as.factor(bicicletas$season)
 levels(bicicletas$season) <- c("1", "2", "3", "4")
 ```
+
+# Desarrollo del modelo
+
+## Ajuste del modelo
+
+Es esta sección de ajusta el modelo correspondiente, el cual corresponde a un GLM. 
+
+Inicialmente, se separan los datos en aquellos de entrenamiento y aquellos de prueba.
+
+```{r separación}
+# Datos de entrenamiento, primer año y medio
+training <- bicicletas[1:547, ]
+
+# Datos de prueba, los últimos 6 meses registrados
+testing <- bicicletas[548:nrow(bicicletas), ]
+```
+
+En primer lugar, hay que notar la existencia de sobredispersión, lo cual se puede comprobar en múltiples gráficos del análisis exploratorio, por lo que se usará un modelo de regresión binomial negativa.
+
+Debido a que se puede notar una tendencia creciente, se usará el tiempo como covariable durante el ajuste. Como parece que el clima cambia el conteo de bicicletas, se agrega como covariable. Además, ya que se observa un ciclo semanal evidente en los periodogramas, se agrega el rezago como covariable.
+
+```{r ajuste}
+# Variable de conteo en formato de serie temporal
+conteo <-
+  ts(data = training$cnt,
+     start = c(2011, 1, 1),
+     frequency = 365)
+
+# Ajuste del modelo
+ajuste <-
+  glm.nb(cnt ~ dteday + weathersit + stats::lag(conteo, -7), data = training)
+
+# Resumen del ajuste
+summary(ajuste)
+
+# Ya que la fecha parece no ser significativa, se reemplaza por la estación
+ajuste <-
+  glm.nb(cnt ~ season + weathersit + stats::lag(conteo, -7), data = training)
+
+# Resumen del ajuste
+summary(ajuste)
+```
+
+## Diagnósticos del modelo
+
+```{r residuos}
+plot(residuals(ajuste, type = "deviance"))
+```
+
