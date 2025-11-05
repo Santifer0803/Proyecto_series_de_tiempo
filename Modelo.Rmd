@@ -106,7 +106,79 @@ summary(ajuste)
 
 ## Diagnósticos del modelo
 
+### Residuos
+
+Inicialmente, se muestran los residuos de devianza.
+
 ```{r residuos}
+# Se muestran los residuos de devianza
 plot(residuals(ajuste, type = "deviance"))
 ```
 
+Posteriormente, los residuales contra cada una de las variables numéricas utilizadas.
+
+```{r linealidad_modelo}
+# scatter.smooth(rstandard(ajuste) ~ stats::lag(conteo, -7), col="grey", las=1, ylab="Standardized residuals", xlab="Height (inches)")
+
+# termplot(ajuste, partial.resid = TRUE, terms = "stats::lag(conteo, -7)", las=1)
+
+# scatter.smooth(rstandard(ajuste) ~ fitted(ajuste), col="grey", las=1, ylab="Standardized residuals", xlab="Fitted values")
+
+# Se guardan los residuales
+r <- rstandard(ajuste)
+
+# Lagplot
+plot(r[-length(r)], r[-1], xlab="Residual at time t-1", ylab="Residual at time t",
+     main="Lag Plot", pch=19, col="blue")
+```
+
+
+### Apalancamientos
+
+Seguidamente, se muestran algunos de los apalancamientos más grandes.
+
+```{r apalancamientos}
+# Se guardan los apalancamientos
+apalancamientos <- hatvalues(ajuste)
+
+# Se identifican las apalancamientos mayores al doble de la media
+apal_grandes <-
+  sort(apalancamientos, decreasing = TRUE)[1:sum(apalancamientos > 2 * mean(apalancamientos))]
+
+# Observaciones con grandes apalancamientos
+apal_grandes <- training[names(apal_grandes), ]
+
+# Se grafica el clima de las observaciones con grandes apalancamientos
+data.frame(
+  "clima" = names(table(training$weathersit, exclude = "Despejado")),
+  "entrenamiento" = as.numeric(table(training$weathersit, exclude = "Despejado")),
+  "influyentes" = as.numeric(table(apal_grandes$weathersit, exclude = "Despejado"))
+) %>%
+  pivot_longer(
+    cols = c(entrenamiento, influyentes),
+    names_to = "nombre",
+    values_to = "valor"
+  ) %>%
+  ggplot(aes(x = clima, y = valor, fill = nombre)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(x = "Clima",
+       y = "Cantidad de observaciones",
+       fill = "") +
+  theme_minimal() +
+  scale_fill_manual(
+    values = c(paleta_colores[2], paleta_colores[7]),
+    labels = c("media" = "Media del conteo",
+               "varianza" = "Varianza del conteo (en miles)")
+  )
+```
+
+La observación restante es:
+
+```{r obs_apal}
+# El otro gran apalancamiento que no cumple lo del clima
+apal_grandes[18, "dteday"]
+```
+
+Esta fecha corresponde al día de San Patricio del año 2012, la cual coincidió con la presencia del presidente estadounidense Barack Obama en [Washington](https://www.shutterstock.com/es/editorial/image-editorial/s-president-barack-obama-toasts-guinness-beer-12359379e) (lugar del negocio de bicicletas). Además, hay reportes de que los cerezos de una zona de Washington estaban en plena [floración](https://www.shutterstock.com/es/image-photo/washington-dc-march-17-cherry-trees-166299320). 
+
+Parece que los 3 eventos juntos causaron un aumento atípico en la cantidad de bicicletas alquiladas ese día, lo cual explica su alto apalancamiento.
