@@ -111,9 +111,27 @@ summary(ajuste)
 Inicialmente, se muestran los residuos de devianza.
 
 ```{r residuos}
+# Se guardan los residuos de devianza
+dev_res <- residuals(ajuste, type = "deviance")
+
 # Se muestran los residuos de devianza
-plot(residuals(ajuste, type = "deviance"))
+plot(dev_res)
+
+# Se identifican los residuos mayores a 2 (en valor absoluto)
+resid_grandes <- sort(abs(dev_res), decreasing = TRUE)[1:sum(abs(dev_res) > 2)]
+
+# Observaciones con grandes residuos
+resid_grandes <- training[names(resid_grandes), ]
 ```
+
+Con respecto a los residuales grandes en valor absoluto, parece que estos son debido a eventos atípicos. Algunos ejemplos de esto:
+
+* 19-5-2012: [Survive DC](http://www.survivedc.com), una carrera organizada en donde múltiples persona sparticipan por premios, causó más alquileres de lo normal.
+* 23-3-2012: [Festival](https://link.springer.com/article/10.1007/s13748-013-0040-3) nacional de los cerezos en flor, causó más alquileres de lo normal.
+* 2-6-2012: Hubo un [tornado](https://link.springer.com/article/10.1007/s13748-013-0040-3) el día anterior, lo cual causó más alquileres de lo normal.
+* 26-1-2011 y 27-1-2011: Una fuerte [tormenta de nieve](https://www.washingtontimes.com/news/2011/jan/27/snowstorm-leaves-dc-area-feeling-powerless) afectó diversas áreas de EEUU, incluyendo el área de Washington, en donde se ubica el sistema de bicicletas, lo cual causó menos alquileres de lo normal.
+* 6-3-2011: Fue de los días de más humedad registrada, lo cual coincidió con un clima nublado en domingo, lo cual redujo las bicicletas alquiladas, a pesar de ser un día de fin de semana.
+* 24-12-2011 y 25-12-2011: Nochebuena y Navidad, lo cual parece haber reducido la cantidad de bicicletas alquiladas.
 
 Posteriormente, los residuales contra cada una de las variables numéricas utilizadas.
 
@@ -128,8 +146,15 @@ Posteriormente, los residuales contra cada una de las variables numéricas utili
 r <- rstandard(ajuste)
 
 # Lagplot
-plot(r[-length(r)], r[-1], xlab="Residual at time t-1", ylab="Residual at time t",
-     main="Lag Plot", pch=19, col="blue")
+plot(
+  r[-length(r)],
+  r[-1],
+  xlab = "Residual en t-1",
+  ylab = "Residual en t",
+  main = "Lag Plot",
+  pch = 19,
+  col = paleta_colores[1]
+)
 ```
 
 
