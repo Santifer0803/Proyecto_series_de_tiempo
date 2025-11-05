@@ -155,14 +155,14 @@ ggplot(bicicletas,
 
 Para esta sección se agregan boxplots de las variables contra los días festivos, con el fin de observar la distribución de los alquileres en estas fechas.
 
-```{r, indicadora dia festivo}
+```{r indicadora_dia_festivo}
 # Factor para día festivo (0/1 -> No festivo / Festivo)
 bicicletas$holiday <- as.factor(bicicletas$holiday)
 levels(bicicletas$holiday) <- c("No festivo", "Festivo")
 ```
 
 
-```{r, alquileres totales por días festivos}
+```{r alquileres_totales_por_días_festivos}
 ggplot(bicicletas,
        aes(x = holiday, y = cnt, fill = holiday)) +
   geom_boxplot() +
@@ -173,7 +173,7 @@ ggplot(bicicletas,
 ```
 En el gráfico anterior se puede observar una mayor dispersión de los días festivos, y un menor promedio de alquileres en contraste de los días no festivos, donde el promedio es mayor y de hecho hay una menor distribución de los datos, indicando de cierta forma una consistencia en los datos. 
 
-```{r, alquileres casuales por día festivo}
+```{r alquileres_casuales_por_día_festivo}
 ggplot(bicicletas,
        aes(x = holiday, y = casual, fill = holiday)) +
   geom_boxplot() +
@@ -185,7 +185,7 @@ ggplot(bicicletas,
 Del boxplot anterior se observa entonces que la diferencia entre promedios casi no es significativa, por un lado, por el otro, se observa una mayor dispersión de los datos cuando el día festivo. Además se observan bastantes outliers cuando el día no es festivo. 
 
 
-```{r, alquileres regulares por día festivo}
+```{r alquileres_regulares_por_día_festivo}
 ggplot(bicicletas,
        aes(x = holiday, y = registered, fill = holiday)) +
   geom_boxplot() +
@@ -201,13 +201,13 @@ Del gráfico anterior, se observa entonces un comportamiento el cual es esperado
 
 Para esta sección se crea la variable indicadora, con el fin de filtrar las observaciones y realizar el cálculo del promedio mediante visualización de cajas:
 
-```{r, Indicadora Día Laboral}
+```{r Indicadora_Día_Laboral}
 # Factor para día laboral (0/1 -> No laboral / Laboral)
 bicicletas$workingday <- as.factor(bicicletas$workingday)
 levels(bicicletas$workingday) <- c("No laboral", "Laboral")
 ```
 
-```{r, alquileres totales por día laboral}
+```{r alquileres_totales_por_día_laboral}
 ggplot(bicicletas,
        aes(x = workingday, y = cnt, fill = workingday)) +
   geom_boxplot() +
@@ -219,7 +219,7 @@ ggplot(bicicletas,
 Del gráfico anterior se observa una mayor cantidad alquileres en los días no laborales, sin embargo, el promedio de alquileres de ambos días tienen un comportamiento parecido. 
 
 
-```{r, Alquileres casuales por día laboral}
+```{r Alquileres_casuales_por_día_laboral}
 ggplot(bicicletas,
        aes(x = workingday, y = casual, fill = workingday)) +
   geom_boxplot() +
@@ -230,7 +230,7 @@ ggplot(bicicletas,
 ```
 Gracias a este boxplot se puede hacer la diferencia de las personas que alquilan de manera casual, en donde se puede observar la diferencia que existe entre el promedio de alquileres en los días no laborales a los días que sí son laborales. Esto tiene sentido, pues las personas que alquilan de manera no casual lo hacen a modo recreativo los días que no son laborales. 
 
-```{r, alquileres regulares por día laboral}
+```{r alquileres_regulares_por_día_laboral}
 ggplot(bicicletas,
        aes(x = workingday, y = registered, fill = workingday)) +
   geom_boxplot() +
