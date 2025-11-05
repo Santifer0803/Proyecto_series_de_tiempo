@@ -1,0 +1,61 @@
+---
+title: "Modelo"
+author: "Alejandro Brenes, Santiago Fernández, Eyeri Méndez y Erick Venegas"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+# Preparación inicial
+
+Inicialmente, descargamos las librerías requeridas.
+
+```{r librerias}
+pacman::p_load(astsa,
+               dplyr,
+               ggplot2,
+               lubridate,
+               paletteer,
+               readr,
+               tidyr)
+```
+
+Posteriormente, se cargan los datos requeridos.
+
+```{r descarga_datos, message = FALSE}
+bicicletas <- read_csv("data/bicicletas.csv")
+```
+
+Se guarda la paleta de colores utilizada para el desarrollo del proyecto.
+
+```{r paleta_colores}
+paleta_colores <- c(
+  "#4B1D91",
+  "#641896",
+  "#84109B",
+  "#9B109C",
+  "#B0179C",
+  "#CB2B97",
+  "#E2438A",
+  "#EF6276",
+  "#F28265",
+  "#F2A85F",
+  "#EDC375",
+  "#E7D39A"
+)
+```
+
+Algunas correcciones de formato.
+
+```{r formato}
+# Se discretiza la variable de días de la semana
+bicicletas$weekday <- as.factor(bicicletas$weekday)
+levels(bicicletas$weekday) <- c("Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb")
+
+# Se discretiza la variable del clima
+bicicletas$weathersit <- as.factor(bicicletas$weathersit)
+levels(bicicletas$weathersit) <- c("Despejado", "Nublado", "Lluvioso/Nevado")
+
+# Se discretiza la variable de la estacion (para boxplot)
+bicicletas$season <- as.factor(bicicletas$season)
+levels(bicicletas$season) <- c("1", "2", "3", "4")
+```
