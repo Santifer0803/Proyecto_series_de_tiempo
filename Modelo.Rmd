@@ -207,3 +207,12 @@ apal_grandes[18, "dteday"]
 Esta fecha corresponde al día de San Patricio del año 2012, la cual coincidió con la presencia del presidente estadounidense Barack Obama en [Washington](https://www.shutterstock.com/es/editorial/image-editorial/s-president-barack-obama-toasts-guinness-beer-12359379e) (lugar del negocio de bicicletas). Además, hay reportes de que los cerezos de una zona de Washington estaban en plena [floración](https://www.shutterstock.com/es/image-photo/washington-dc-march-17-cherry-trees-166299320). 
 
 Parece que los 3 eventos juntos causaron un aumento atípico en la cantidad de bicicletas alquiladas ese día, lo cual explica su alto apalancamiento.
+
+### ACF y PACF de residuos
+
+Posteriormente, se muestra el ACF y PACF de los residuos resultantes del modelo GLM binomial negativo.
+
+```{r acf_residuos}
+acf2(residuals(ajuste, type = "deviance"), 100)
+```
+
