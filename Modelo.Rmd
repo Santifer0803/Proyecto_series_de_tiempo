@@ -18,7 +18,8 @@ pacman::p_load(astsa,
                paletteer,
                readr,
                statmod,
-               tidyr)
+               tidyr,
+               tscount)
 ```
 
 Posteriormente, se cargan los datos requeridos.
@@ -91,20 +92,42 @@ conteo <-
 
 # Ajuste del modelo
 ajuste <-
-  glm.nb(cnt ~ dteday + weathersit + stats::lag(conteo, -7), data = training)
+  glm.nb(cnt ~ dteday + weathersit + stats::lag(conteo, 7), data = training)
 
 # Resumen del ajuste
 summary(ajuste)
 
 # Ya que la fecha parece no ser significativa, se reemplaza por la estación
 ajuste <-
-  glm.nb(cnt ~ season + weathersit + stats::lag(conteo, -7), data = training)
+  glm.nb(cnt ~ season + weathersit + stats::lag(conteo, 7), data = training)
 
 # Resumen del ajuste
 summary(ajuste)
 ```
 
-## Diagnósticos del modelo
+Posteriormente, se prueba el ajuste con un modelo glarma.
+
+```{r ajuste_glarma}
+# Variable objetivo con lag semanal
+training <- training %>%
+  mutate(lag7 = dplyr::lag(cnt, 7)) %>%
+  drop_na()
+
+# Matriz modelo
+matrizm <- model.matrix( ~ season + lag7, data = training)
+
+# Ajuste glarma
+ajuste_prueba <- tsglm(
+  training$cnt,
+  model = list(past_obs = 1, past_mean = 1),
+  xreg = matrizm[, -1],
+  distr = "nbinom",
+  link = "log"
+)
+```
+
+
+## Diagnósticos del ajuste por GLM
 
 ### Residuos
 
@@ -214,5 +237,19 @@ Posteriormente, se muestra el ACF y PACF de los residuos resultantes del modelo 
 
 ```{r acf_residuos}
 acf2(residuals(ajuste, type = "deviance"), 100)
+```
+
+## Diagnósticos del ajuste por glarma
+
+Se muestran los residuos de Pearson.
+
+```{r residuos_glarma}
+plot(residuals(ajuste_prueba, type = "pearson"))
+```
+
+Adicionalmente, el ACF y PACF de los residuos restantes.
+
+```{r acfs_glarma}
+acf2(residuals(ajuste_prueba, type = "pearson"), 100)
 ```
 
