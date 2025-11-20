@@ -347,6 +347,8 @@ Se procede con el histograma de la transformación integral de probabilidad (PIT
 pit(ajuste_tsglm, main = "")
 ```
 
+El paper no explica detalladamente cómo interpretar este tipo de datos. Sin embargo, cabe aclarar que no presenta forma de "U" ni de "U inversa", por lo cual, se puede decir que no existe sobredispersión ni infradispersión una vez ajustada la distribución binomial negativa.
+
 ## Ajuste final considerando outliers
 
 Para solventar el problema de valores atípicos, se puede ajustar el tsglm para los eventos en donde existen eventos atípicos, esto se hace agregando un peso a las observaciones que muestren este comportamiento. Para este ajuste, se consideran atípicas todas las observaciones con un residual de Pearson mayor a 2.
@@ -411,3 +413,4 @@ Se procede con el histograma de la transformación integral de probabilidad.
 pit(ajuste_tsglm, main = "")
 ```
 
+El análisis es análogo al PIT anterior, pues no parece haber un gran cambio.
