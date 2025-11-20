@@ -193,8 +193,6 @@ nrow(apal_grandes)
 
 Hay 10 apalancamientos significativamente grandes (más de 2 veces por encima de la media), esto representa menos del 2% de las observaciones, aunque sigue siendo un elemento a considerar.
 
-Con el fin de medir algunas observaciones influyentes, se considera la distancia de Cook para este modelo.
-
 ### ACF y PACF de residuos del glm
 
 Posteriormente, se muestra el ACF y PACF de los residuos resultantes del modelo GLM binomial negativo.
@@ -203,7 +201,7 @@ Posteriormente, se muestra el ACF y PACF de los residuos resultantes del modelo 
 acf2(residuals(ajuste, type = "deviance"), 100, main = "")
 ```
 
-En el gráfico anterior se observan autocorrelaciones significativas en los residuos de devianza, tanto en el ACF como en el PACF. Esto sugiere que existe una dependencia temporal remanente que el modelo no logra explicar.
+En el gráfico anterior se observan autocorrelaciones significativas en los residuos de Pearson, tanto en el ACF como en el PACF. Esto sugiere que existe una dependencia temporal remanente que el modelo no logra explicar.
 
 La totalidad de los diagnósticos apunta a que existen valores atípicos, apalancamientos considerables y una dependencia temporal en el ajuste de los datos de entrenamiento. Todos estos inconvenientes sugieren que el modelo no parece acoplarse correctamente a los datos disponibles, lo cual invita a considerar otro modelo.
 
@@ -339,6 +337,8 @@ Se procede mostrando el ACF y PACF de los residuos de este ajuste.
 acf2(residuos_tsglm, 100, main = "")
 ```
 
+Los gráficos anteriores muestran que los residuos tienen algún componente de autocorrelación remanente, estos mejoran bastante el ajuste por GLM, aunque no parece suficiente para intuir, al menos con esta prueba, que siguen un ruido blanco.
+
 ### PIT del tsglm
 
 Se procede con el histograma de la transformación integral de probabilidad (PIT, por sus siglas en inglés).
@@ -403,7 +403,7 @@ Adicionalmente, el ACF y PACF de los residuos restantes.
 acf2(residuals(ajuste_tsglm, type = "pearson"), 100, main = "")
 ```
 
-Tanto el ACF como el PACF de los residuos de Pearson parece haber empeorado en este ajuste, pues se muestran más valores significativos que en el ajuste anterior.
+Tanto el ACF como el PACF de los residuos de Pearson parece haber empeorado en este ajuste, pues se muestran más valores significativos que en el ajuste anterior. Aunque este sigue siendo bastante mejor que el ajuste por GLM.
 
 ### PIT del tsglm considerando atípicos
 
