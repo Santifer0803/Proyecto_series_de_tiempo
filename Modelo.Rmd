@@ -147,19 +147,19 @@ ajuste <- lista_ajustes[[2]]
 
 ## Diagnósticos del ajuste por GLM
 
-### Residuos
+### Residuos del glm
 
 Inicialmente, se muestran los residuos de devianza.
 
 ```{r residuos}
 # Se guardan los residuos de devianza
-dev_res <- residuals(ajuste, type = "deviance")
+residuos_glm <- residuals(ajuste, type = "pearson")
 
 # Se muestran los residuos de devianza
-plot(dev_res)
+plot(residuos_glm)
 
 # Se identifican los residuos mayores a 2 (en valor absoluto)
-resid_grandes <- sort(abs(dev_res), decreasing = TRUE)[1:sum(abs(dev_res) > 2)]
+resid_grandes <- sort(abs(residuos_glm), decreasing = TRUE)[1:sum(abs(residuos_glm) > 2)]
 
 # Observaciones con grandes residuos
 resid_grandes <- training[names(resid_grandes), ]
@@ -172,7 +172,7 @@ Con respecto a los residuales grandes en valor absoluto, parece que estos son de
 * 6-3-2011: Fue de los días de más humedad registrada, lo cual coincidió con un clima nublado en domingo, lo cual redujo las bicicletas alquiladas, a pesar de ser un día de fin de semana.
 * 24-12-2011 y 25-12-2011: Nochebuena y Navidad, lo cual parece haber reducido la cantidad de bicicletas alquiladas.
 
-### Apalancamientos
+### Apalancamientos del glm
 
 Seguidamente, se muestran algunos de los apalancamientos más grandes.
 
@@ -193,7 +193,9 @@ nrow(apal_grandes)
 
 Hay 10 apalancamientos significativamente grandes (más de 2 veces por encima de la media), esto representa menos del 2% de las observaciones, aunque sigue siendo un elemento a considerar.
 
-### ACF y PACF de residuos
+Con el fin de medir algunas observaciones influyentes, se considera la distancia de Cook para este modelo.
+
+### ACF y PACF de residuos del glm
 
 Posteriormente, se muestra el ACF y PACF de los residuos resultantes del modelo GLM binomial negativo.
 
@@ -308,17 +310,104 @@ lista_tsglm[[8]] <- tsglm(
 ajuste_tsglm <- lista_tsglm[[6]]
 ```
 
-## Diagnósticos del ajuste por glarma
+## Diagnósticos del ajuste por tsglm
+
+### Residuos de Pearson del tsglm
 
 Se muestran los residuos de Pearson.
 
-```{r residuos_glarma}
-plot(residuals(ajuste_tsglm, type = "pearson"))
+```{r pearson_tsglm}
+# Se guardan los residuos de Pearson
+residuos_tsglm <- residuals(ajuste_tsglm, type = "pearson")
+
+# Gráfico de los residuos
+plot(residuos_tsglm)
+
+# Observaciones con grandes residuos
+resid_grandes_tsglm <- training[which(abs(residuos_tsglm) > 2), ]
+nrow(resid_grandes_tsglm)
 ```
+
+Hay más valores atípicos bajo este ajuste que bajo el GLM seleccionado finalmente (21 contra 33). No obstante, parece haber disminuido ligeramente el rango de los residuos en este último modelo (por arriba, principalmente), a pesar de que algunas de las observaciones atípicas se repiten en ambos casos.
+
+### ACF y PACF de residuos del tsglm
+
+Se procede mostrando el ACF y PACF de los residuos de este ajuste.
+
+```{r acf_pacf_tsglm}
+# ACF y PACF de los residuos
+acf2(residuos_tsglm, 100, main = "")
+```
+
+### PIT del tsglm
+
+Se procede con el histograma de la transformación integral de probabilidad (PIT, por sus siglas en inglés).
+
+```{r pit_final}
+pit(ajuste_tsglm, main = "")
+```
+
+## Ajuste final considerando outliers
+
+Para solventar el problema de valores atípicos, se puede ajustar el tsglm para los eventos en donde existen eventos atípicos, esto se hace agregando un peso a las observaciones que muestren este comportamiento. Para este ajuste, se consideran atípicas todas las observaciones con un residual de Pearson mayor a 2.
+
+```{r ajuste_outliers}
+# Prueba de hipótesis para comprobar si existen pesos significativos (H0: w0 = ... = ws = 0)
+(ajuste_tsglm <- interv_test(ajuste_tsglm, resid_grandes_tsglm$instant - 7, rep(0, 33), est_interv = TRUE))
+
+# Reajustamos el modelo con las observaciones atípicas, pues se rechaza H0
+ajuste_tsglm <- ajuste_tsglm$fit_interv
+```
+
+## Diagnósticos del tsglm considerando atípicos
+
+### Criterios de información del tsglm considerando atípicos
+
+Una vez ajustado el nuevo modelo, se procede con algunos diagnósticos como los criterios de información.
+
+```{r criterios_informacion_finales}
+# AIC y BIC del modelo final
+AIC(ajuste_tsglm)
+BIC(ajuste_tsglm)
+```
+
+Tanto el AIC como el BIC disminuyeron con el nuevo ajuste, lo que indica que la inclusión de las magnitudes para observaciones atípicas funciona mejor que el modelo sin ellas.
+
+### Residuos de Pearson del tsglm considerando atípicos
+
+Posteriormente los residuos del Pearson del nuevo modelo.
+
+```{r pearson_finales}
+# Residuos de pearson
+residuos_tsglm <- residuals(ajuste_tsglm, type = "pearson")
+
+# Gráfico de los residuos
+plot(residuos_tsglm)
+
+# Observaciones con grandes residuos
+resid_grandes_tsglm <- training[which(abs(residuos_tsglm) > 2), ]
+nrow(resid_grandes_tsglm)
+```
+
+Se redujo la cantidad de observaciones atípicas, de 33 a 24, en comparación al primer ajuste por tsglm. Por otro lado, parece que el rango de residuos se redujo ligeramente por abajo, pero aumentó considerablemente por arriba.
+
+Lo anterior indica que el cambio en el modelo mitigó algunos de los problemas, pero magnifica otros.
+
+### ACF y PACF del tsglm considerando atípicos
 
 Adicionalmente, el ACF y PACF de los residuos restantes.
 
-```{r acfs_glarma}
+```{r acfs_tsglm}
 acf2(residuals(ajuste_tsglm, type = "pearson"), 100, main = "")
+```
+
+Tanto el ACF como el PACF de los residuos de Pearson parece haber empeorado en este ajuste, pues se muestran más valores significativos que en el ajuste anterior.
+
+### PIT del tsglm considerando atípicos
+
+Se procede con el histograma de la transformación integral de probabilidad.
+
+```{r pit_final}
+pit(ajuste_tsglm, main = "")
 ```
 
