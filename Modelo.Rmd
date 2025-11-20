@@ -210,17 +210,102 @@ La totalidad de los diagnósticos apunta a que existen valores atípicos, apalan
 Posteriormente, se prueba el ajuste con un modelo tsglm.
 
 ```{r ajuste_glarma}
-# Matriz modelo
-matrizm <- model.matrix( ~ season + lag7, data = training)
+# Lista para guardar los modelos
+lista_tsglm <- list()
 
-# Ajuste glarma
-ajuste_prueba <- tsglm(
+# Matriz de modelo inicial, con las variables más simples
+matrizm <- model.matrix(~ dteday + season, data = training)
+
+# Ajuste tsglm (p = 1, q = 0)
+lista_tsglm[[1]] <- tsglm(
   training$cnt,
-  model = list(past_obs = 1, past_mean = 1),
-  xreg = matrizm[, -1],
+  model = list(past_obs = 1, past_mean = 0),
+  xreg = matrizm[,-1],
   distr = "nbinom",
   link = "log"
 )
+
+# Ajuste tsglm (p = 1, q = 1)
+lista_tsglm[[2]] <- tsglm(
+  training$cnt,
+  model = list(past_obs = 1, past_mean = 1),
+  xreg = matrizm[,-1],
+  distr = "nbinom",
+  link = "log"
+)
+
+# Matriz de modelo con la dependencia semanal y la fecha como covariables
+matrizm <- model.matrix(~ dteday + lag7, data = training)
+
+# Ajuste tsglm (p = 1, q = 0)
+lista_tsglm[[3]] <- tsglm(
+  training$cnt,
+  model = list(past_obs = 1, past_mean = 0),
+  xreg = matrizm[,-1],
+  distr = "nbinom",
+  link = "log"
+)
+
+# Ajuste tsglm (p = 1, q = 1)
+lista_tsglm[[4]] <- tsglm(
+  training$cnt,
+  model = list(past_obs = 1, past_mean = 1),
+  xreg = matrizm[,-1],
+  distr = "nbinom",
+  link = "log"
+)
+
+# Matriz de modelo con la dependencia semanal y la estación como covariables
+matrizm <- model.matrix(~ season + lag7, data = training)
+
+# Ajuste tsglm (p = 1, q = 0)
+lista_tsglm[[5]] <- tsglm(
+  training$cnt,
+  model = list(past_obs = 1, past_mean = 0),
+  xreg = matrizm[,-1],
+  distr = "nbinom",
+  link = "log"
+)
+
+# Ajuste tsglm (p = 1, q = 1)
+lista_tsglm[[6]] <- tsglm(
+  training$cnt,
+  model = list(past_obs = 1, past_mean = 1),
+  xreg = matrizm[,-1],
+  distr = "nbinom",
+  link = "log"
+)
+
+# Matriz de modelo con la dependencia semanal, la estación y la fecha como covariables
+matrizm <- model.matrix(~ dteday + season + lag7, data = training)
+
+# Ajuste tsglm
+lista_tsglm[[7]] <- tsglm(
+  training$cnt,
+  model = list(past_obs = 1, past_mean = 0),
+  xreg = matrizm[,-1],
+  distr = "nbinom",
+  link = "log"
+)
+
+# Ajuste tsglm
+lista_tsglm[[8]] <- tsglm(
+  training$cnt,
+  model = list(past_obs = 1, past_mean = 1),
+  xreg = matrizm[,-1],
+  distr = "nbinom",
+  link = "log"
+)
+
+# Se calculan las diversas métricas para los modelos tsglm
+(metricas_tsglm <- data.frame(
+  "indice" = 1:8,
+  "aic" = sapply(X = lista_tsglm, FUN = AIC),
+  "bic" = sapply(X = lista_tsglm, FUN = BIC)
+))
+
+# El modelo 6 minimiza el AIC y el BIC, por lo que se mantiene este ajuste
+ajuste_tsglm <- lista_tsglm[[6]]
 ```
 
 ## Diagnósticos del ajuste por glarma
@@ -228,12 +313,12 @@ ajuste_prueba <- tsglm(
 Se muestran los residuos de Pearson.
 
 ```{r residuos_glarma}
-plot(residuals(ajuste_prueba, type = "pearson"))
+plot(residuals(ajuste_tsglm, type = "pearson"))
 ```
 
 Adicionalmente, el ACF y PACF de los residuos restantes.
 
 ```{r acfs_glarma}
-acf2(residuals(ajuste_prueba, type = "pearson"), 100)
+acf2(residuals(ajuste_tsglm, type = "pearson"), 100, main = "")
 ```
 
