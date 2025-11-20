@@ -61,13 +61,26 @@ levels(bicicletas$weathersit) <- c("Despejado", "Nublado", "Lluvioso/Nevado")
 # Se discretiza la variable de la estacion (para boxplot)
 bicicletas$season <- as.factor(bicicletas$season)
 levels(bicicletas$season) <- c("1", "2", "3", "4")
+
+# Factor para día festivo (0/1 -> No festivo / Festivo)
+bicicletas$holiday <- as.factor(bicicletas$holiday)
+levels(bicicletas$holiday) <- c("No festivo", "Festivo")
+
+# Factor para día laboral (0/1 -> No laboral / Laboral)
+bicicletas$workingday <- as.factor(bicicletas$workingday)
+levels(bicicletas$workingday) <- c("No laboral", "Laboral")
+
+# Variable objetivo con lag semanal
+bicicletas <- bicicletas %>%
+  mutate(lag7 = dplyr::lag(cnt, 7)) %>%
+  drop_na()
 ```
 
 # Desarrollo del modelo
 
-## Ajuste del modelo
+## Ajuste del modelo a través de un GLM
 
-Es esta sección de ajusta el modelo correspondiente, el cual corresponde a un GLM. 
+Es esta sección de ajusta el modelo correspondiente, el cual inicia como un GLM. 
 
 Inicialmente, se separan los datos en aquellos de entrenamiento y aquellos de prueba.
 
@@ -84,48 +97,53 @@ En primer lugar, hay que notar la existencia de sobredispersión, lo cual se pue
 Debido a que se puede notar una tendencia creciente, se usará el tiempo como covariable durante el ajuste. Como parece que el clima cambia el conteo de bicicletas, se agrega como covariable. Además, ya que se observa un ciclo semanal evidente en los periodogramas, se agrega el rezago como covariable.
 
 ```{r ajuste}
-# Variable de conteo en formato de serie temporal
-conteo <-
-  ts(data = training$cnt,
-     start = c(2011, 1, 1),
-     frequency = 365)
+# Lista para guardar los diversos ajustes
+lista_ajustes <- list()
 
-# Ajuste del modelo
-ajuste <-
-  glm.nb(cnt ~ dteday + weathersit + stats::lag(conteo, 7), data = training)
+# Ajuste del modelo inicial basado en la tendencia de la serie y los periodogramas
+lista_ajustes[[1]] <- glm.nb(cnt ~ dteday + lag7, data = training)
 
 # Resumen del ajuste
-summary(ajuste)
+summary(lista_ajustes[[1]])
 
-# Ya que la fecha parece no ser significativa, se reemplaza por la estación
-ajuste <-
-  glm.nb(cnt ~ season + weathersit + stats::lag(conteo, 7), data = training)
+# Ya que la estación parece generar cambios en la variable respuesta, se agrega como posible ajuste
+lista_ajustes[[2]] <-
+  glm.nb(cnt ~ dteday + season + lag7, data = training)
 
 # Resumen del ajuste
-summary(ajuste)
+summary(lista_ajustes[[2]])
+
+# Parece que el hecho de ser día festivo genera un cambio en la respuesta, por lo que se considera en el siguiente ajuste
+lista_ajustes[[3]] <-
+  glm.nb(cnt ~ dteday + season + lag7 + holiday, data = training)
+
+# Resumen del ajuste
+summary(lista_ajustes[[3]])
+
+# El año también parece afectar al conteo, por lo cual, se hace un ajuste cambiando la última variable
+lista_ajustes[[4]] <-
+  glm.nb(cnt ~ dteday + season + lag7 + yr, data = training)
+
+# Resumen del ajuste
+summary(lista_ajustes[[4]])
+
+# Ajuste con todas las variables consideradas durante el análisis
+lista_ajustes[[5]] <-
+  glm.nb(cnt ~ dteday + season + lag7 + yr + holiday, data = training)
+
+# Resumen del ajuste
+summary(lista_ajustes[[5]])
+
+# Se calcula el AIC y BIC de cada uno de los modelos
+(metricas_glm <- data.frame(
+  "indice" = 1:5,
+  "aic" = sapply(X = lista_ajustes, FUN = AIC),
+  "bic" = sapply(X = lista_ajustes, FUN = BIC)
+))
+
+# El modelo seleccionado es el segundo, el cual posee el BIC más bajo con las variables con sentido predictivo
+ajuste <- lista_ajustes[[2]]
 ```
-
-Posteriormente, se prueba el ajuste con un modelo glarma.
-
-```{r ajuste_glarma}
-# Variable objetivo con lag semanal
-training <- training %>%
-  mutate(lag7 = dplyr::lag(cnt, 7)) %>%
-  drop_na()
-
-# Matriz modelo
-matrizm <- model.matrix( ~ season + lag7, data = training)
-
-# Ajuste glarma
-ajuste_prueba <- tsglm(
-  training$cnt,
-  model = list(past_obs = 1, past_mean = 1),
-  xreg = matrizm[, -1],
-  distr = "nbinom",
-  link = "log"
-)
-```
-
 
 ## Diagnósticos del ajuste por GLM
 
@@ -149,37 +167,10 @@ resid_grandes <- training[names(resid_grandes), ]
 
 Con respecto a los residuales grandes en valor absoluto, parece que estos son debido a eventos atípicos. Algunos ejemplos de esto:
 
-* 19-5-2012: [Survive DC](http://www.survivedc.com), una carrera organizada en donde múltiples persona sparticipan por premios, causó más alquileres de lo normal.
 * 23-3-2012: [Festival](https://link.springer.com/article/10.1007/s13748-013-0040-3) nacional de los cerezos en flor, causó más alquileres de lo normal.
-* 2-6-2012: Hubo un [tornado](https://link.springer.com/article/10.1007/s13748-013-0040-3) el día anterior, lo cual causó más alquileres de lo normal.
 * 26-1-2011 y 27-1-2011: Una fuerte [tormenta de nieve](https://www.washingtontimes.com/news/2011/jan/27/snowstorm-leaves-dc-area-feeling-powerless) afectó diversas áreas de EEUU, incluyendo el área de Washington, en donde se ubica el sistema de bicicletas, lo cual causó menos alquileres de lo normal.
 * 6-3-2011: Fue de los días de más humedad registrada, lo cual coincidió con un clima nublado en domingo, lo cual redujo las bicicletas alquiladas, a pesar de ser un día de fin de semana.
 * 24-12-2011 y 25-12-2011: Nochebuena y Navidad, lo cual parece haber reducido la cantidad de bicicletas alquiladas.
-
-Posteriormente, los residuales contra cada una de las variables numéricas utilizadas.
-
-```{r linealidad_modelo}
-# scatter.smooth(rstandard(ajuste) ~ stats::lag(conteo, -7), col="grey", las=1, ylab="Standardized residuals", xlab="Height (inches)")
-
-# termplot(ajuste, partial.resid = TRUE, terms = "stats::lag(conteo, -7)", las=1)
-
-# scatter.smooth(rstandard(ajuste) ~ fitted(ajuste), col="grey", las=1, ylab="Standardized residuals", xlab="Fitted values")
-
-# Se guardan los residuales
-r <- rstandard(ajuste)
-
-# Lagplot
-plot(
-  r[-length(r)],
-  r[-1],
-  xlab = "Residual en t-1",
-  ylab = "Residual en t",
-  main = "Lag Plot",
-  pch = 19,
-  col = paleta_colores[1]
-)
-```
-
 
 ### Apalancamientos
 
@@ -196,47 +187,40 @@ apal_grandes <-
 # Observaciones con grandes apalancamientos
 apal_grandes <- training[names(apal_grandes), ]
 
-# Se grafica el clima de las observaciones con grandes apalancamientos
-data.frame(
-  "clima" = names(table(training$weathersit, exclude = "Despejado")),
-  "entrenamiento" = as.numeric(table(training$weathersit, exclude = "Despejado")),
-  "influyentes" = as.numeric(table(apal_grandes$weathersit, exclude = "Despejado"))
-) %>%
-  pivot_longer(
-    cols = c(entrenamiento, influyentes),
-    names_to = "nombre",
-    values_to = "valor"
-  ) %>%
-  ggplot(aes(x = clima, y = valor, fill = nombre)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  labs(x = "Clima",
-       y = "Cantidad de observaciones",
-       fill = "") +
-  theme_minimal() +
-  scale_fill_manual(
-    values = c(paleta_colores[2], paleta_colores[7]),
-    labels = c("media" = "Media del conteo",
-               "varianza" = "Varianza del conteo (en miles)")
-  )
+# Cantidad de observaciones con apalancamientos significativamente grandes
+nrow(apal_grandes)
 ```
 
-La observación restante es:
-
-```{r obs_apal}
-# El otro gran apalancamiento que no cumple lo del clima
-apal_grandes[18, "dteday"]
-```
-
-Esta fecha corresponde al día de San Patricio del año 2012, la cual coincidió con la presencia del presidente estadounidense Barack Obama en [Washington](https://www.shutterstock.com/es/editorial/image-editorial/s-president-barack-obama-toasts-guinness-beer-12359379e) (lugar del negocio de bicicletas). Además, hay reportes de que los cerezos de una zona de Washington estaban en plena [floración](https://www.shutterstock.com/es/image-photo/washington-dc-march-17-cherry-trees-166299320). 
-
-Parece que los 3 eventos juntos causaron un aumento atípico en la cantidad de bicicletas alquiladas ese día, lo cual explica su alto apalancamiento.
+Hay 10 apalancamientos significativamente grandes (más de 2 veces por encima de la media), esto representa menos del 2% de las observaciones, aunque sigue siendo un elemento a considerar.
 
 ### ACF y PACF de residuos
 
 Posteriormente, se muestra el ACF y PACF de los residuos resultantes del modelo GLM binomial negativo.
 
 ```{r acf_residuos}
-acf2(residuals(ajuste, type = "deviance"), 100)
+acf2(residuals(ajuste, type = "deviance"), 100, main = "")
+```
+
+En el gráfico anterior se observan autocorrelaciones significativas en los residuos de devianza, tanto en el ACF como en el PACF. Esto sugiere que existe una dependencia temporal remanente que el modelo no logra explicar.
+
+La totalidad de los diagnósticos apunta a que existen valores atípicos, apalancamientos considerables y una dependencia temporal en el ajuste de los datos de entrenamiento. Todos estos inconvenientes sugieren que el modelo no parece acoplarse correctamente a los datos disponibles, lo cual invita a considerar otro modelo.
+
+## Ajuste por tsglm
+
+Posteriormente, se prueba el ajuste con un modelo tsglm.
+
+```{r ajuste_glarma}
+# Matriz modelo
+matrizm <- model.matrix( ~ season + lag7, data = training)
+
+# Ajuste glarma
+ajuste_prueba <- tsglm(
+  training$cnt,
+  model = list(past_obs = 1, past_mean = 1),
+  xreg = matrizm[, -1],
+  distr = "nbinom",
+  link = "log"
+)
 ```
 
 ## Diagnósticos del ajuste por glarma
