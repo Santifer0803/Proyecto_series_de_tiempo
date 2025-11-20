@@ -86,10 +86,10 @@ Inicialmente, se separan los datos en aquellos de entrenamiento y aquellos de pr
 
 ```{r separación}
 # Datos de entrenamiento, primer año y medio
-training <- bicicletas[1:547, ]
+training <- bicicletas[1:540, ]
 
 # Datos de prueba, los últimos 6 meses registrados
-testing <- bicicletas[548:nrow(bicicletas), ]
+testing <- bicicletas[541:nrow(bicicletas), ]
 ```
 
 En primer lugar, hay que notar la existencia de sobredispersión, lo cual se puede comprobar en múltiples gráficos del análisis exploratorio, por lo que se usará un modelo de regresión binomial negativa.
@@ -414,3 +414,9 @@ pit(ajuste_tsglm, main = "")
 ```
 
 El análisis es análogo al PIT anterior, pues no parece haber un gran cambio.
+
+# Predicción
+
+De los 3 modelos ajustados, se empleará el que utiliza magnitudes para definir los valores atípicos, esto debido a que es el que minimiza las métricas de AIC y BIC.
+
+Una vez elegido el modelo que se usará, se procede a predecir utilizando los datos de prueba, recordando que estos corresponden a 
