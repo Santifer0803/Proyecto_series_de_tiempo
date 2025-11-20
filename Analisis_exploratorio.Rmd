@@ -66,6 +66,10 @@ levels(bicicletas$holiday) <- c("No festivo", "Festivo")
 # Factor para día laboral (0/1 -> No laboral / Laboral)
 bicicletas$workingday <- as.factor(bicicletas$workingday)
 levels(bicicletas$workingday) <- c("No laboral", "Laboral")
+
+# Factor para año (0/1 -> 2011 / 2012)
+bicicletas$yr <- as.factor(bicicletas$yr)
+levels(bicicletas$yr) <- c("2011", "2012")
 ```
 
 # Análisis exploratorio de datos
@@ -152,6 +156,33 @@ ggplot(bicicletas,
 # Conteo de bicicletas registradas según estación
 ggplot(bicicletas,
        aes(x = season, y = registered, fill = season)) +
+  geom_boxplot() +
+  labs(x = "Estación", y = "Cantidad de bibicletas") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_manual(values = paleta_colores)
+
+# Conteo de bicicletas (total) según año
+ggplot(bicicletas,
+       aes(x = yr, y = cnt, fill = yr)) +
+  geom_boxplot() +
+  labs(x = "Estación", y = "Cantidad de bibicletas") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_manual(values = paleta_colores)
+
+# Conteo de bicicletas casuales según año
+ggplot(bicicletas,
+       aes(x = yr, y = casual, fill = yr)) +
+  geom_boxplot() +
+  labs(x = "Estación", y = "Cantidad de bibicletas") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_manual(values = paleta_colores)
+
+# Conteo de bicicletas registradas según año
+ggplot(bicicletas,
+       aes(x = yr, y = registered, fill = yr)) +
   geom_boxplot() +
   labs(x = "Estación", y = "Cantidad de bibicletas") +
   theme_minimal() +
