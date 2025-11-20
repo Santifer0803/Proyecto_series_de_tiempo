@@ -62,6 +62,10 @@ levels(bicicletas$season) <- c("1", "2", "3", "4")
 # Factor para día festivo (0/1 -> No festivo / Festivo)
 bicicletas$holiday <- as.factor(bicicletas$holiday)
 levels(bicicletas$holiday) <- c("No festivo", "Festivo")
+
+# Factor para día laboral (0/1 -> No laboral / Laboral)
+bicicletas$workingday <- as.factor(bicicletas$workingday)
+levels(bicicletas$workingday) <- c("No laboral", "Laboral")
 ```
 
 # Análisis exploratorio de datos
@@ -155,7 +159,7 @@ ggplot(bicicletas,
   scale_fill_manual(values = paleta_colores)
 ```
 
-## Boxplot por día festivo:
+## Boxplot por día festivo
 
 Para esta sección se agregan boxplots de las variables contra los días festivos, con el fin de observar la distribución de los alquileres en estas fechas.
 
@@ -196,12 +200,6 @@ Del gráfico anterior, se observa entonces un comportamiento el cual es esperado
 ## Boxplot por día trabajado
 
 Para esta sección se crea la variable indicadora, con el fin de filtrar las observaciones y realizar el cálculo del promedio mediante visualización de cajas:
-
-```{r Indicadora_Día_Laboral}
-# Factor para día laboral (0/1 -> No laboral / Laboral)
-bicicletas$workingday <- as.factor(bicicletas$workingday)
-levels(bicicletas$workingday) <- c("No laboral", "Laboral")
-```
 
 ```{r alquileres_totales_por_día_laboral}
 ggplot(bicicletas,
