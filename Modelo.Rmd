@@ -419,4 +419,60 @@ El análisis es análogo al PIT anterior, pues no parece haber un gran cambio.
 
 De los 3 modelos ajustados, se empleará el que utiliza magnitudes para definir los valores atípicos, esto debido a que es el que minimiza las métricas de AIC y BIC.
 
-Una vez elegido el modelo que se usará, se procede a predecir utilizando los datos de prueba, recordando que estos corresponden a 
+Una vez elegido el modelo que se usará, se procede a predecir utilizando los datos de prueba, recordando que estos corresponden a los últimos 6 meses del año 2012.
+
+```{r prediccion}
+# Matriz de modelo
+matrizm <- model.matrix( ~ season + lag7, data = testing)
+
+# Nombres de las columnas restantes
+columnas_dif <-
+  setdiff(colnames(ajuste_tsglm$xreg), colnames(matrizm))
+
+# Se crea una matriz de 0
+matriz_ceros <-
+  matrix(0,
+         nrow = nrow(matrizm),
+         ncol = (ncol(ajuste_tsglm$xreg) - ncol(matrizm[,-1])))
+
+# Se juntan las matrices
+matrizm <- cbind(matrizm, matriz_ceros)
+
+# Se cambian los nombres
+colnames(matrizm)[2:ncol(matrizm)] <- colnames(ajuste_tsglm$xreg)
+
+# Se elimina la matriz auxiliar
+rm(matriz_ceros)
+
+# Predicción de los datos de testing
+prediccion <- predict(ajuste_tsglm,
+                      n.ahead = nrow(matrizm),
+                      newxreg = matrizm[,-1])
+```
+
+# Resultados
+
+Con la predicción obtenida, a continuación se muestran los resultados a través de un gráfico comparativo y diversos diagnósticos.
+
+Se inicia con un gráfico comparativo que muestra la predicción y los valores reales.
+
+```{r grafico_comparativo}
+# Se agregan los datos a un dataframe y se grafican
+data.frame(
+  "fecha" = testing$dteday,
+  "real" = testing$cnt,
+  "prediccion" = prediccion$pred,
+  "ic_inferior" = prediccion$interval[, "lower"],
+  "ic_superior" = prediccion$interval[, "upper"]
+) %>%
+  ggplot(aes(x = fecha)) +
+  geom_line(aes(y = real, color = "Real")) +
+  geom_line(aes(y = prediccion, color = "Predicción")) +
+  geom_ribbon(aes(ymin = ic_inferior, ymax = ic_superior, fill = "IC predicción"),
+              alpha = 0.1) +
+  scale_color_manual(name = "Series", values = c("Real" = paleta_colores[1], "Predicción" = paleta_colores[4])) +
+  scale_fill_manual(name = "IC", values = c("IC predicción" = paleta_colores[6])) +
+  labs(x = "Fecha", y = "Cantidad de bicicletas") +
+  theme_minimal()
+```
+
