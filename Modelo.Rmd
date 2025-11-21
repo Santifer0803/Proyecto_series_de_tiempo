@@ -306,6 +306,9 @@ lista_tsglm[[8]] <- tsglm(
 
 # El modelo 6 minimiza el AIC y el BIC, por lo que se mantiene este ajuste
 ajuste_tsglm <- lista_tsglm[[6]]
+
+# Resumen del ajuste
+summary(ajuste_tsglm)
 ```
 
 ## Diagnósticos del ajuste por tsglm
@@ -359,6 +362,9 @@ Para solventar el problema de valores atípicos, se puede ajustar el tsglm para 
 
 # Reajustamos el modelo con las observaciones atípicas, pues se rechaza H0
 ajuste_tsglm <- ajuste_tsglm$fit_interv
+
+# Resumen del ajujste
+summary(ajuste_tsglm)
 ```
 
 ## Diagnósticos del tsglm considerando atípicos
