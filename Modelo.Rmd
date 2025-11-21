@@ -422,6 +422,9 @@ De los 3 modelos ajustados, se empleará el que utiliza magnitudes para definir 
 Una vez elegido el modelo que se usará, se procede a predecir utilizando los datos de prueba, recordando que estos corresponden a los últimos 6 meses del año 2012.
 
 ```{r prediccion}
+# Semilla para el bootstrap
+set.seed(333)
+
 # Matriz de modelo
 matrizm <- model.matrix( ~ season + lag7, data = testing)
 
@@ -447,7 +450,8 @@ rm(matriz_ceros)
 # Predicción de los datos de testing
 prediccion <- predict(ajuste_tsglm,
                       n.ahead = nrow(matrizm),
-                      newxreg = matrizm[,-1])
+                      newxreg = matrizm[,-1],
+                      B = 10000)
 ```
 
 # Resultados
@@ -472,9 +476,21 @@ data.frame(
               alpha = 0.1) +
   scale_color_manual(name = "Series", values = c("Real" = paleta_colores[1], "Predicción" = paleta_colores[4])) +
   scale_fill_manual(name = "IC", values = c("IC predicción" = paleta_colores[6])) +
-  labs(x = "Fecha", y = "Cantidad de bicicletas") +
+  labs(x = "Fecha (2012)", y = "Cantidad de bicicletas") +
   theme_minimal()
 ```
 
 Se observa que, aunque la estimación parece correcta en algunos puntos, existe una incertidumbre inmensa con el modelo seleccionado. Se observan valores atípicos claros, que incluso llegan a salir del IC, pero el comportamiento general indica que hay un gran error en la estimación.
 
+A continuación, se muestra el error que hubo en cada observación a través de un residuo crudo, este corresponde a la resta del valor real con el estimado.
+
+```{r residuos_crudos}
+data.frame("fecha" = testing$dteday,
+           "error" = testing$cnt - prediccion$pred) %>% 
+  ggplot(aes(x = fecha, y = error)) +
+  geom_point(color = paleta_colores[3]) +
+  labs(x = "Fecha (2012)", y = "Error") +
+  theme_minimal()
+```
+
+Los mayores errores se observan debido al [Huracán Sandy](https://www.bbc.com/mundo/noticias/2012/10/121029_livetext_supertormenta_sandy_ao), el cual supuso una gran catástrofe en EEUU y, por supuesto, impedía que las personas utilizaran el servicio.
