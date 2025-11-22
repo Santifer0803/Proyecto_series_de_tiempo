@@ -346,7 +346,7 @@ Los gráficos anteriores muestran que los residuos tienen algún componente de a
 
 Se procede con el histograma de la transformación integral de probabilidad (PIT, por sus siglas en inglés).
 
-```{r pit_final}
+```{r pit_tsglm}
 pit(ajuste_tsglm, main = "")
 ```
 
