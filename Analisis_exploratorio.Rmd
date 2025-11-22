@@ -456,7 +456,8 @@ La correlación negativa indica que el número de bicicletas de hoy afecta de ma
 Finalmente, se agrega el ACF junto al PACF de la variable objetivo.
 
 ```{r acf_pacf_cnt}
-acf2(bicicletas$cnt, 100, main = "")
+acf1(bicicletas$cnt, 100, main = "")
+pacf(bicicletas$cnt, 100, main = "", xlab = "LAG", ylab = "PACF")
 ```
 
 Se observa una función de autocorrelación con significancia en rezagos muy elevados, decreciendo de forma muy lenta, al igual que un PACF con valores significativos en rezagos avanzados.
