@@ -203,7 +203,7 @@ Hay 10 apalancamientos significativamente grandes (más de 2 veces por encima de
 Posteriormente, se muestra el ACF y PACF de los residuos resultantes del modelo GLM binomial negativo.
 
 ```{r acf_residuos}
-acf2(residuals(ajuste, type = "pearson"), 100, main = "")
+acf1(residuals(ajuste, type = "pearson"), 100, main = "")
 ```
 
 En el gráfico anterior se observan autocorrelaciones significativas en los residuos de Pearson, tanto en el ACF como en el PACF. Esto sugiere que existe una dependencia temporal remanente que el modelo no logra explicar.
@@ -347,7 +347,7 @@ Se procede mostrando el ACF y PACF de los residuos de este ajuste.
 
 ```{r acf_pacf_tsglm}
 # ACF y PACF de los residuos
-acf2(residuos_tsglm, 100, main = "")
+acf1(residuos_tsglm, 100, main = "")
 ```
 
 Los gráficos anteriores muestran que los residuos tienen algún componente de autocorrelación remanente, estos mejoran bastante el ajuste por GLM, aunque no parece suficiente para intuir, al menos con esta prueba, que siguen un ruido blanco.
@@ -421,7 +421,7 @@ Lo anterior indica que el cambio en el modelo mitigó algunos de los problemas, 
 Adicionalmente, el ACF y PACF de los residuos restantes.
 
 ```{r acfs_tsglm}
-acf2(residuals(ajuste_tsglm, type = "pearson"), 100, main = "")
+acf1(residuals(ajuste_tsglm, type = "pearson"), 100, main = "")
 ```
 
 Tanto el ACF como el PACF de los residuos de Pearson parece haber empeorado en este ajuste, pues se muestran más valores significativos que en el ajuste anterior. Aunque este sigue siendo bastante mejor que el ajuste por GLM.
