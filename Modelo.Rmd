@@ -198,7 +198,7 @@ Hay 10 apalancamientos significativamente grandes (más de 2 veces por encima de
 Posteriormente, se muestra el ACF y PACF de los residuos resultantes del modelo GLM binomial negativo.
 
 ```{r acf_residuos}
-acf2(residuals(ajuste, type = "deviance"), 100, main = "")
+acf2(residuals(ajuste, type = "pearson"), 100, main = "")
 ```
 
 En el gráfico anterior se observan autocorrelaciones significativas en los residuos de Pearson, tanto en el ACF como en el PACF. Esto sugiere que existe una dependencia temporal remanente que el modelo no logra explicar.
