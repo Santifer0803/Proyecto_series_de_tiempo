@@ -267,6 +267,49 @@ ggplot(bicicletas,
 
 Por otro lado, con el botplox anterior, se puede observar como las personas que usan la app con frecuencia, de hecho tienen mayor constancia los días que son laborales. Esto puede indicar varias razones, por ejemplo que utilicen el alquiler como medio de transporte, por ende hay una disminución del alquiler en días no laborales, ya que las personas no van al trabajo. Otra posible explicación se puede deber a que estas personas utilizan la bicicleta como parte de sus rutina de ejercicios los días laborales y descansan los días no laborales. 
 
+## Boxplots por año
+
+Debido a la tendencia creciente de las series de tiempo, separar los alquileres por año podría suponer una discriminación correcta de los datos de bicicletas. Esta se muestra a continuación.
+
+```{r totales_anno}
+ggplot(bicicletas,
+       aes(x = yr, y = cnt, fill = yr)) +
+  geom_boxplot() +
+  labs(x = "Año", y = "Alquileres totales") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_manual(values = paleta_colores)
+```
+
+Luego, se separa con los alquileres de usuarios casuales.
+
+```{r casuales_anno}
+ggplot(bicicletas,
+       aes(x = yr, y = casual, fill = yr)) +
+  geom_boxplot() +
+  labs(x = "Año", y = "Alquileres casuales") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_manual(values = paleta_colores)
+```
+
+Finalmente, se procede con los alquileres de usuarios registrados.
+
+```{r registrados_anno}
+ggplot(bicicletas,
+       aes(x = yr, y = registered, fill = yr)) +
+  geom_boxplot() +
+  labs(x = "Año", y = "Alquileres registrados") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_manual(values = paleta_colores)
+```
+
+
+## Boxplots continuos
+
+Se procede con los boxplots de las variables continuas que presentan los datos.
+
 ```{r boxplots_continuos}
 variables_cont <- c("temp", "atemp", "hum", "windspeed")
 
