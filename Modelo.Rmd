@@ -60,7 +60,7 @@ levels(bicicletas$weathersit) <- c("Despejado", "Nublado", "Lluvioso/Nevado")
 
 # Se discretiza la variable de la estacion (para boxplot)
 bicicletas$season <- as.factor(bicicletas$season)
-levels(bicicletas$season) <- c("1", "2", "3", "4")
+levels(bicicletas$season) <- c("Invierno", "Primavera", "Verano", "Otoño")
 
 # Factor para día festivo (0/1 -> No festivo / Festivo)
 bicicletas$holiday <- as.factor(bicicletas$holiday)
