@@ -502,11 +502,15 @@ data.frame("fecha" = testing$dteday,
   labs(x = "Fecha (2012)", y = "Error") +
   theme_minimal()
 
-# Cantidad de residuos mayores a 100 (porcentaje)
-sum(resid_final > 100) / length(resid_final)
+# Cantidad de residuos mayores a 100 en valor absoluto (porcentaje)
+sum(abs(resid_final) > 100) / length(resid_final)
 
-# Cantidad de residuos mayores a 1000 (porcentaje)
-sum(resid_final > 1000) / length(resid_final)
+# Cantidad de residuos mayores a 1000 en valor absoluto (porcentaje)
+sum(abs(resid_final) > 1000) / length(resid_final)
 ```
 
 Los mayores errores se observan debido al [Huracán Sandy](https://www.bbc.com/mundo/noticias/2012/10/121029_livetext_supertormenta_sandy_ao), el cual supuso una gran catástrofe en EEUU y, por supuesto, impedía que las personas utilizaran el servicio.
+
+Sin embargo, a pesar del evento atípico mencionado, se observa que casi todas las predicciones difieren en más de 100 bicicletas (95.1\%). De igual forma, existe una gran cantidad de observaciones que poseen una distancia mayor a 1000 bicicletas (41.8\%).
+
+Todos estos factores hacen imposible decir que la predicción del modelo fue acertada, la elevada incertidumbre combinada con un valor medio con gran error respecto a los datos reales evidencian que el desempeño del modelo no fue el esperado.
