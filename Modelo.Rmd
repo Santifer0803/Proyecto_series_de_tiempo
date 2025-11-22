@@ -491,12 +491,19 @@ Se observa que, aunque la estimación parece correcta en algunos puntos, existe 
 A continuación, se muestra el error que hubo en cada observación a través de un residuo crudo, este corresponde a la resta del valor real con el estimado.
 
 ```{r residuos_crudos}
+# Residuos
+resid_final <- testing$cnt - prediccion$pred
+
+# Gráfico de residuos
 data.frame("fecha" = testing$dteday,
-           "error" = testing$cnt - prediccion$pred) %>% 
+           "error" = resid_final) %>% 
   ggplot(aes(x = fecha, y = error)) +
   geom_point(color = paleta_colores[3]) +
   labs(x = "Fecha (2012)", y = "Error") +
   theme_minimal()
+
+# Cantidad de residuos mayores a 1000 (porcentaje)
+sum(resid_final > 1000) / length(resid_final)
 ```
 
 Los mayores errores se observan debido al [Huracán Sandy](https://www.bbc.com/mundo/noticias/2012/10/121029_livetext_supertormenta_sandy_ao), el cual supuso una gran catástrofe en EEUU y, por supuesto, impedía que las personas utilizaran el servicio.
