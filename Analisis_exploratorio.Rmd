@@ -723,7 +723,7 @@ data.frame(freq = hum_bicis$freq,
            spec = hum_bicis$spec) %>%
   ggplot(aes(x = freq, y = spec)) +
   geom_line(color = paleta_colores[6], linewidth = 1) +
-  labs(x = "Frecuencia (x 365)",
+  labs(x = "Frecuencia (diaria)",
        y = "Espectro (escala logarítmica)") +
   theme_minimal(base_size = 14)
 
@@ -875,7 +875,7 @@ data.frame(freq = registro_bicis$freq,
     hjust = -0.1,
     size = 4
   ) +
-  labs(x = "Frecuencia (diaria)",
+  labs(x = "Frecuencia (x 365)",
        y = "Espectro (escala logarítmica)") +
   theme_minimal(base_size = 14)
 ```
