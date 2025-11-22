@@ -164,7 +164,7 @@ data.frame("fecha" = training$dteday,
   theme_minimal()
 
 # Se identifican los residuos mayores a 2 (en valor absoluto)
-resid_grandes <- sort(abs(residuos_glm), decreasing = TRUE)[1:sum(abs(residuos_glm) > 2)]
+resid_grandes <- sort(abs(residuos_glm), decreasing = TRUE)[1:sum(abs(residuos_glm) > 2.5)]
 
 # Observaciones con grandes residuos
 resid_grandes <- training[names(resid_grandes), ]
@@ -335,7 +335,7 @@ data.frame("fecha" = training$dteday,
   theme_minimal()
 
 # Observaciones con grandes residuos
-resid_grandes_tsglm <- training[which(abs(residuos_tsglm) > 2), ]
+resid_grandes_tsglm <- training[which(abs(residuos_tsglm) > 2.5), ]
 nrow(resid_grandes_tsglm)
 ```
 
@@ -368,7 +368,15 @@ Para solventar el problema de valores atípicos, se puede ajustar el tsglm para 
 
 ```{r ajuste_outliers}
 # Prueba de hipótesis para comprobar si existen pesos significativos (H0: w0 = ... = ws = 0)
-(ajuste_tsglm <- interv_test(ajuste_tsglm, resid_grandes_tsglm$instant - 7, rep(0, 33), est_interv = TRUE))
+(
+  ajuste_tsglm <-
+    interv_test(
+      ajuste_tsglm,
+      resid_grandes_tsglm$instant - 7,
+      rep(0, nrow(resid_grandes_tsglm)),
+      est_interv = TRUE
+    )
+)
 
 # Reajustamos el modelo con las observaciones atípicas, pues se rechaza H0
 ajuste_tsglm <- ajuste_tsglm$fit_interv
@@ -389,7 +397,7 @@ AIC(ajuste_tsglm)
 BIC(ajuste_tsglm)
 ```
 
-Tanto el AIC como el BIC aumentaron con el nuevo ajuste, lo que indica que la inclusión de las magnitudes para observaciones atípicas funciona peor que el modelo sin ellas.
+Tanto el AIC como el BIC disminuyeron con el nuevo ajuste, lo que indica que la inclusión de las magnitudes para observaciones atípicas funciona mejor que el modelo sin ellas.
 
 ### Residuos de Pearson del tsglm considerando atípicos
 
@@ -408,7 +416,7 @@ data.frame("fecha" = training$dteday,
   theme_minimal()
 
 # Observaciones con grandes residuos
-resid_grandes_tsglm <- training[which(abs(residuos_tsglm) > 2), ]
+resid_grandes_tsglm <- training[which(abs(residuos_tsglm) > 2.5), ]
 nrow(resid_grandes_tsglm)
 ```
 
@@ -447,16 +455,34 @@ Una vez elegido el modelo que se usará, se procede a predecir utilizando los da
 set.seed(333)
 
 # Matriz de modelo
-matrizm <- model.matrix(~ dteday + lag7, data = testing)
+matrizm <- model.matrix(~ season + lag7, data = testing)
 
-# Ajuste final
-ajuste_tsglm <- lista_tsglm[[4]]
+# Nombres de las columnas restantes
+columnas_dif <-
+  setdiff(colnames(ajuste_tsglm$xreg), colnames(matrizm))
+
+# Se crea una matriz de 0
+matriz_ceros <-
+  matrix(0,
+         nrow = nrow(matrizm),
+         ncol = (ncol(ajuste_tsglm$xreg) - ncol(matrizm[, -1])))
+
+# Se juntan las matrices
+matrizm <- cbind(matrizm, matriz_ceros)
+
+# Se cambian los nombres
+colnames(matrizm)[2:ncol(matrizm)] <- colnames(ajuste_tsglm$xreg)
+
+# Se elimina la matriz auxiliar
+rm(matriz_ceros)
 
 # Predicción de los datos de testing
-prediccion <- predict(ajuste_tsglm,
-                      n.ahead = nrow(matrizm),
-                      newxreg = matrizm[,-1],
-                      B = 10000)
+prediccion <- predict(
+  ajuste_tsglm,
+  n.ahead = nrow(matrizm),
+  newxreg = matrizm[, -1],
+  B = 10000
+)
 ```
 
 # Resultados
@@ -479,8 +505,12 @@ data.frame(
   geom_line(aes(y = prediccion, color = "Predicción")) +
   geom_ribbon(aes(ymin = ic_inferior, ymax = ic_superior, fill = "IC predicción"),
               alpha = 0.1) +
-  scale_color_manual(name = "Series", values = c("Real" = paleta_colores[1], "Predicción" = paleta_colores[4])) +
-  scale_fill_manual(name = "IC", values = c("IC predicción" = paleta_colores[6])) +
+  scale_color_manual(
+    name = "Series",
+    values = c("Real" = paleta_colores[1], "Predicción" = paleta_colores[4])
+  ) +
+  scale_fill_manual(name = "IC",
+                    values = c("IC predicción" = paleta_colores[6])) +
   labs(x = "Fecha (2012)", y = "Cantidad de bicicletas") +
   theme_minimal()
 ```
@@ -495,7 +525,7 @@ resid_final <- testing$cnt - prediccion$pred
 
 # Gráfico de residuos
 data.frame("fecha" = testing$dteday,
-           "error" = resid_final) %>% 
+           "error" = resid_final) %>%
   ggplot(aes(x = fecha, y = error)) +
   geom_point(color = paleta_colores[3]) +
   labs(x = "Fecha (2012)", y = "Error") +
