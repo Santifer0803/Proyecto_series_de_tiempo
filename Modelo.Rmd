@@ -428,7 +428,7 @@ Lo anterior indica que el cambio en el modelo mitigó algunos de los problemas, 
 
 Adicionalmente, el ACF de los residuos restantes.
 
-```{r acf_tsglm}
+```{r acf_tsglm_atipicos}
 acf1(residuals(ajuste_tsglm, type = "pearson"), 100, main = "")
 ```
 
