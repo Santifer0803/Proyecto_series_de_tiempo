@@ -156,7 +156,12 @@ Inicialmente, se muestran los residuos de devianza.
 residuos_glm <- residuals(ajuste, type = "pearson")
 
 # Se muestran los residuos de devianza
-plot(residuos_glm)
+data.frame("fecha" = training$dteday,
+           "error" = residuos_glm) %>% 
+  ggplot(aes(x = fecha, y = error)) +
+  geom_point(color = paleta_colores[3]) +
+  labs(x = "Fecha", y = "Residuos") +
+  theme_minimal()
 
 # Se identifican los residuos mayores a 2 (en valor absoluto)
 resid_grandes <- sort(abs(residuos_glm), decreasing = TRUE)[1:sum(abs(residuos_glm) > 2)]
@@ -209,7 +214,7 @@ La totalidad de los diagnósticos apunta a que existen valores atípicos, apalan
 
 Posteriormente, se prueba el ajuste con un modelo tsglm.
 
-```{r ajuste_glarma}
+```{r ajuste_tsglm}
 # Lista para guardar los modelos
 lista_tsglm <- list()
 
@@ -322,7 +327,12 @@ Se muestran los residuos de Pearson.
 residuos_tsglm <- residuals(ajuste_tsglm, type = "pearson")
 
 # Gráfico de los residuos
-plot(residuos_tsglm)
+data.frame("fecha" = training$dteday,
+           "error" = residuos_tsglm) %>% 
+  ggplot(aes(x = fecha, y = error)) +
+  geom_point(color = paleta_colores[3]) +
+  labs(x = "Fecha", y = "Residuos") +
+  theme_minimal()
 
 # Observaciones con grandes residuos
 resid_grandes_tsglm <- training[which(abs(residuos_tsglm) > 2), ]
@@ -347,7 +357,7 @@ Los gráficos anteriores muestran que los residuos tienen algún componente de a
 Se procede con el histograma de la transformación integral de probabilidad (PIT, por sus siglas en inglés).
 
 ```{r pit_tsglm}
-pit(ajuste_tsglm, main = "")
+pit(ajuste_tsglm, main = "", col = paleta_colores[4])
 ```
 
 El paper no explica detalladamente cómo interpretar este tipo de datos. Sin embargo, cabe aclarar que no presenta forma de "U" ni de "U inversa", por lo cual, se puede decir que no existe sobredispersión ni infradispersión una vez ajustada la distribución binomial negativa.
@@ -390,7 +400,12 @@ Posteriormente los residuos del Pearson del nuevo modelo.
 residuos_tsglm <- residuals(ajuste_tsglm, type = "pearson")
 
 # Gráfico de los residuos
-plot(residuos_tsglm)
+data.frame("fecha" = training$dteday,
+           "error" = residuos_tsglm) %>% 
+  ggplot(aes(x = fecha, y = error)) +
+  geom_point(color = paleta_colores[3]) +
+  labs(x = "Fecha", y = "Residuos") +
+  theme_minimal()
 
 # Observaciones con grandes residuos
 resid_grandes_tsglm <- training[which(abs(residuos_tsglm) > 2), ]
@@ -416,7 +431,7 @@ Tanto el ACF como el PACF de los residuos de Pearson parece haber empeorado en e
 Se procede con el histograma de la transformación integral de probabilidad.
 
 ```{r pit_final}
-pit(ajuste_tsglm, main = "")
+pit(ajuste_tsglm, main = "", col = paleta_colores[4])
 ```
 
 El análisis es análogo al PIT anterior, pues no parece haber un gran cambio.
