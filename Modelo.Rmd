@@ -451,11 +451,8 @@ De los 3 modelos ajustados, se empleará el que no utiliza magnitudes para defin
 Una vez elegido el modelo que se usará, se procede a predecir utilizando los datos de prueba, recordando que estos corresponden a los últimos 6 meses del año 2012.
 
 ```{r prediccion}
-# Semilla para el bootstrap
-set.seed(333)
-
 # Matriz de modelo
-matrizm <- model.matrix(~ season + lag7, data = testing)
+matrizm <- model.matrix(~ dteday + lag7, data = testing)
 
 # Nombres de las columnas restantes
 columnas_dif <-
@@ -540,6 +537,6 @@ sum(abs(resid_final) > 1000) / length(resid_final)
 
 Los mayores errores se observan debido al [Huracán Sandy](https://www.bbc.com/mundo/noticias/2012/10/121029_livetext_supertormenta_sandy_ao), el cual supuso una gran catástrofe en EEUU y, por supuesto, impedía que las personas utilizaran el servicio.
 
-Sin embargo, a pesar del evento atípico mencionado, se observa que casi todas las predicciones difieren en más de 100 bicicletas (84.7\%). De igual forma, existe una gran cantidad de observaciones que poseen una distancia mayor a 1000 bicicletas (32.6\%).
+Sin embargo, a pesar del evento atípico mencionado, se observa que casi todas las predicciones difieren en más de 100 bicicletas (92.4\%). De igual forma, existe una gran cantidad de observaciones que poseen una distancia mayor a 1000 bicicletas (33.7\%).
 
 Todos estos factores hacen imposible decir que la predicción del modelo fue acertada, la elevada incertidumbre combinada con un valor medio con gran error respecto a los datos reales evidencian que el desempeño del modelo no fue el esperado.
