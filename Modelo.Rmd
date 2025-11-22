@@ -514,6 +514,8 @@ data.frame(
 
 Se observa que, aunque la estimación parece correcta en algunos puntos, existe una incertidumbre inmensa con el modelo seleccionado. Se observan valores atípicos claros, que incluso llegan a salir del IC, pero el comportamiento general indica que hay un gran error en la estimación.
 
+Además, parece que los primeros meses la predicción no difiere tanto de las observaciones. A partir de octubre empieza a tener diferencias considerables.
+
 A continuación, se muestra el error que hubo en cada observación a través de un residuo crudo, este corresponde a la resta del valor real con el estimado.
 
 ```{r residuos_crudos}
