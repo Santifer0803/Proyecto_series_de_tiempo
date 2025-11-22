@@ -502,6 +502,9 @@ data.frame("fecha" = testing$dteday,
   labs(x = "Fecha (2012)", y = "Error") +
   theme_minimal()
 
+# Cantidad de residuos mayores a 100 (porcentaje)
+sum(resid_final > 100) / length(resid_final)
+
 # Cantidad de residuos mayores a 1000 (porcentaje)
 sum(resid_final > 1000) / length(resid_final)
 ```
