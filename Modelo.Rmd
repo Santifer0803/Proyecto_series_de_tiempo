@@ -198,15 +198,15 @@ nrow(apal_grandes)
 
 Hay 10 apalancamientos significativamente grandes (más de 2 veces por encima de la media), esto representa menos del 2% de las observaciones, aunque sigue siendo un elemento a considerar.
 
-### ACF y PACF de residuos del glm
+### ACF de residuos del glm
 
-Posteriormente, se muestra el ACF y PACF de los residuos resultantes del modelo GLM binomial negativo.
+Posteriormente, se muestra el ACF de los residuos resultantes del modelo GLM binomial negativo.
 
 ```{r acf_residuos}
 acf1(residuals(ajuste, type = "pearson"), 100, main = "")
 ```
 
-En el gráfico anterior se observan autocorrelaciones significativas en los residuos de Pearson, tanto en el ACF como en el PACF. Esto sugiere que existe una dependencia temporal remanente que el modelo no logra explicar.
+En el gráfico anterior se observan autocorrelaciones significativas en los residuos de Pearson en el ACF. Esto sugiere que existe una dependencia temporal remanente que el modelo no logra explicar.
 
 La totalidad de los diagnósticos apunta a que existen valores atípicos, apalancamientos considerables y una dependencia temporal en el ajuste de los datos de entrenamiento. Todos estos inconvenientes sugieren que el modelo no parece acoplarse correctamente a los datos disponibles, lo cual invita a considerar otro modelo.
 
@@ -341,12 +341,12 @@ nrow(resid_grandes_tsglm)
 
 Hay más valores atípicos bajo este ajuste que bajo el GLM seleccionado finalmente (21 contra 33). No obstante, parece haber disminuido ligeramente el rango de los residuos en este último modelo (por arriba, principalmente), a pesar de que algunas de las observaciones atípicas se repiten en ambos casos.
 
-### ACF y PACF de residuos del tsglm
+### ACF de residuos del tsglm
 
-Se procede mostrando el ACF y PACF de los residuos de este ajuste.
+Se procede mostrando el ACF de los residuos de este ajuste.
 
-```{r acf_pacf_tsglm}
-# ACF y PACF de los residuos
+```{r acf_tsglm}
+# ACF de los residuos
 acf1(residuos_tsglm, 100, main = "")
 ```
 
@@ -424,15 +424,15 @@ Se redujo la cantidad de observaciones atípicas, de 33 a 14, en comparación al
 
 Lo anterior indica que el cambio en el modelo mitigó algunos de los problemas, pero magnifica otros.
 
-### ACF y PACF del tsglm considerando atípicos
+### ACF del tsglm considerando atípicos
 
-Adicionalmente, el ACF y PACF de los residuos restantes.
+Adicionalmente, el ACF de los residuos restantes.
 
-```{r acfs_tsglm}
+```{r acf_tsglm}
 acf1(residuals(ajuste_tsglm, type = "pearson"), 100, main = "")
 ```
 
-Tanto el ACF como el PACF de los residuos de Pearson parece haber empeorado en este ajuste, pues se muestran más valores significativos que en el ajuste anterior. Aunque este sigue siendo bastante mejor que el ajuste por GLM.
+El ACF de los residuos de Pearson parece haber empeorado en este ajuste, pues se muestran más valores significativos que en el ajuste anterior. Aunque este sigue siendo bastante mejor que el ajuste por GLM.
 
 ### PIT del tsglm considerando atípicos
 
