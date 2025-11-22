@@ -60,7 +60,7 @@ levels(bicicletas$weathersit) <- c("Despejado", "Nublado", "Lluvioso/Nevado")
 
 # Se discretiza la variable de la estacion (para boxplot)
 bicicletas$season <- as.factor(bicicletas$season)
-levels(bicicletas$season) <- c("Invierno", "Primavera", "Verano", "Otoño")
+levels(bicicletas$season) <- c("Invierno", "Primavera", "Verano", "Otonno")
 
 # Factor para día festivo (0/1 -> No festivo / Festivo)
 bicicletas$holiday <- as.factor(bicicletas$holiday)
@@ -310,7 +310,7 @@ lista_tsglm[[8]] <- tsglm(
 ))
 
 # El modelo 6 minimiza el AIC y el BIC, por lo que se mantiene este ajuste
-ajuste_tsglm <- lista_tsglm[[6]]
+ajuste_tsglm <- lista_tsglm[[4]]
 
 # Resumen del ajuste
 summary(ajuste_tsglm)
@@ -389,7 +389,7 @@ AIC(ajuste_tsglm)
 BIC(ajuste_tsglm)
 ```
 
-Tanto el AIC como el BIC disminuyeron con el nuevo ajuste, lo que indica que la inclusión de las magnitudes para observaciones atípicas funciona mejor que el modelo sin ellas.
+Tanto el AIC como el BIC aumentaron con el nuevo ajuste, lo que indica que la inclusión de las magnitudes para observaciones atípicas funciona peor que el modelo sin ellas.
 
 ### Residuos de Pearson del tsglm considerando atípicos
 
@@ -412,7 +412,7 @@ resid_grandes_tsglm <- training[which(abs(residuos_tsglm) > 2), ]
 nrow(resid_grandes_tsglm)
 ```
 
-Se redujo la cantidad de observaciones atípicas, de 33 a 24, en comparación al primer ajuste por tsglm. Por otro lado, parece que el rango de residuos se redujo ligeramente por abajo, pero aumentó considerablemente por arriba.
+Se redujo la cantidad de observaciones atípicas, de 33 a 14, en comparación al primer ajuste por tsglm. Por otro lado, parece que el rango de residuos se redujo ligeramente por abajo, pero aumentó considerablemente por arriba.
 
 Lo anterior indica que el cambio en el modelo mitigó algunos de los problemas, pero magnifica otros.
 
@@ -438,7 +438,7 @@ El análisis es análogo al PIT anterior, pues no parece haber un gran cambio.
 
 # Predicción
 
-De los 3 modelos ajustados, se empleará el que utiliza magnitudes para definir los valores atípicos, esto debido a que es el que minimiza las métricas de AIC y BIC.
+De los 3 modelos ajustados, se empleará el que no utiliza magnitudes para definir los valores atípicos, esto debido a que es el que minimiza las métricas de AIC y BIC.
 
 Una vez elegido el modelo que se usará, se procede a predecir utilizando los datos de prueba, recordando que estos corresponden a los últimos 6 meses del año 2012.
 
@@ -447,26 +447,10 @@ Una vez elegido el modelo que se usará, se procede a predecir utilizando los da
 set.seed(333)
 
 # Matriz de modelo
-matrizm <- model.matrix( ~ season + lag7, data = testing)
+matrizm <- model.matrix(~ dteday + lag7, data = testing)
 
-# Nombres de las columnas restantes
-columnas_dif <-
-  setdiff(colnames(ajuste_tsglm$xreg), colnames(matrizm))
-
-# Se crea una matriz de 0
-matriz_ceros <-
-  matrix(0,
-         nrow = nrow(matrizm),
-         ncol = (ncol(ajuste_tsglm$xreg) - ncol(matrizm[,-1])))
-
-# Se juntan las matrices
-matrizm <- cbind(matrizm, matriz_ceros)
-
-# Se cambian los nombres
-colnames(matrizm)[2:ncol(matrizm)] <- colnames(ajuste_tsglm$xreg)
-
-# Se elimina la matriz auxiliar
-rm(matriz_ceros)
+# Ajuste final
+ajuste_tsglm <- lista_tsglm[[4]]
 
 # Predicción de los datos de testing
 prediccion <- predict(ajuste_tsglm,
@@ -526,6 +510,6 @@ sum(abs(resid_final) > 1000) / length(resid_final)
 
 Los mayores errores se observan debido al [Huracán Sandy](https://www.bbc.com/mundo/noticias/2012/10/121029_livetext_supertormenta_sandy_ao), el cual supuso una gran catástrofe en EEUU y, por supuesto, impedía que las personas utilizaran el servicio.
 
-Sin embargo, a pesar del evento atípico mencionado, se observa que casi todas las predicciones difieren en más de 100 bicicletas (95.1\%). De igual forma, existe una gran cantidad de observaciones que poseen una distancia mayor a 1000 bicicletas (41.8\%).
+Sin embargo, a pesar del evento atípico mencionado, se observa que casi todas las predicciones difieren en más de 100 bicicletas (84.7\%). De igual forma, existe una gran cantidad de observaciones que poseen una distancia mayor a 1000 bicicletas (32.6\%).
 
 Todos estos factores hacen imposible decir que la predicción del modelo fue acertada, la elevada incertidumbre combinada con un valor medio con gran error respecto a los datos reales evidencian que el desempeño del modelo no fue el esperado.
