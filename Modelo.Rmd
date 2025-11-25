@@ -172,10 +172,8 @@ resid_grandes <- training[names(resid_grandes), ]
 
 Con respecto a los residuales grandes en valor absoluto, parece que estos son debido a eventos atípicos. Algunos ejemplos de esto:
 
-* 23-3-2012: [Festival](https://link.springer.com/article/10.1007/s13748-013-0040-3) nacional de los cerezos en flor, causó más alquileres de lo normal.
 * 26-1-2011 y 27-1-2011: Una fuerte [tormenta de nieve](https://www.washingtontimes.com/news/2011/jan/27/snowstorm-leaves-dc-area-feeling-powerless) afectó diversas áreas de EEUU, incluyendo el área de Washington, en donde se ubica el sistema de bicicletas, lo cual causó menos alquileres de lo normal.
-* 6-3-2011: Fue de los días de más humedad registrada, lo cual coincidió con un clima nublado en domingo, lo cual redujo las bicicletas alquiladas, a pesar de ser un día de fin de semana.
-* 24-12-2011 y 25-12-2011: Nochebuena y Navidad, lo cual parece haber reducido la cantidad de bicicletas alquiladas.
+* 27-8-2011: Se registra el acercamiento del [Huracán Irene](https://www.bbc.com/mundo/video_fotos/2011/08/110827_galeria_huracan_irene_costa_este_efectos_jg), lo cual causó un alquiler menor del esperado.
 
 ### Apalancamientos del glm
 
@@ -420,7 +418,7 @@ resid_grandes_tsglm <- training[which(abs(residuos_tsglm) > 2.5), ]
 nrow(resid_grandes_tsglm)
 ```
 
-Se redujo la cantidad de observaciones atípicas, de 33 a 14, en comparación al primer ajuste por tsglm. Por otro lado, parece que el rango de residuos se redujo ligeramente por abajo, pero aumentó considerablemente por arriba.
+Se redujo la cantidad de observaciones atípicas, de 33 a 9, en comparación al primer ajuste por tsglm. Por otro lado, parece que el rango de residuos se redujo ligeramente por abajo, pero aumentó considerablemente por arriba.
 
 Lo anterior indica que el cambio en el modelo mitigó algunos de los problemas, pero magnifica otros.
 
@@ -446,7 +444,7 @@ El análisis es análogo al PIT anterior, pues no parece haber un gran cambio.
 
 # Predicción
 
-De los 3 modelos ajustados, se empleará el que no utiliza magnitudes para definir los valores atípicos, esto debido a que es el que minimiza las métricas de AIC y BIC.
+De los 3 modelos ajustados, se empleará el que utiliza magnitudes para definir los valores atípicos, esto debido a que es el que minimiza las métricas de AIC y BIC.
 
 Una vez elegido el modelo que se usará, se procede a predecir utilizando los datos de prueba, recordando que estos corresponden a los últimos 6 meses del año 2012.
 
