@@ -418,7 +418,13 @@ resid_grandes_tsglm <- training[which(abs(residuos_tsglm) > 2.5), ]
 nrow(resid_grandes_tsglm)
 ```
 
-Se redujo la cantidad de observaciones atípicas, de 33 a 9, en comparación al primer ajuste por tsglm. Por otro lado, parece que el rango de residuos se redujo ligeramente por abajo, pero aumentó considerablemente por arriba.
+Se redujo la cantidad de observaciones atípicas, de 14 a 9, en comparación al primer ajuste por tsglm. Por otro lado, parece que el rango de residuos se redujo ligeramente por abajo, pero aumentó considerablemente por arriba.
+
+Sobre los residuos que restan en este modelo, se tienen algunas explicaciones:
+
+* 28-8-2011: Se registra el acercamiento del [Huracán Irene](https://www.bbc.com/mundo/video_fotos/2011/08/110827_galeria_huracan_irene_costa_este_efectos_jg), lo cual causó un alquiler menor del esperado.
+* 11-3-2011: El estado de Washington fue afectado, indirectamente, por el terremoto de 9.0 en la escala de Richter y posterior [tsunami](https://www-tsunami-gov.translate.goog/previous.events/?p=03-11-11_Honshu&_x_tr_sl=en&_x_tr_tl=es&_x_tr_hl=es&_x_tr_pto=tc) ocurrido en Japón. Esto parerce haber disminuido el alquiler de bicicletas.
+* 30-10-2011: Una inesperada [tormenta de nieve](https://elpais.com/internacional/2011/10/30/album/1319991225_352169.html) en el norte de EEUU azotó el país en vísperas de Halloween. Esto parece haber reducido los alquileres de bicicletas.
 
 Lo anterior indica que el cambio en el modelo mitigó algunos de los problemas, pero magnifica otros.
 
